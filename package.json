@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "lint": "eslint *.js test/*.js"
+    "lint": "node node_modules/eslint/bin/eslint.js *.js test/*.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/haraka/haraka-plugin-log-reader#readme",
   "devDependencies": {
+    "eslint": "*",
     "haraka-test-fixtures": "*",
     "mocha": "*"
   }
