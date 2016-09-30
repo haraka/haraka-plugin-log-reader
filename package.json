@@ -4,7 +4,8 @@
   "description": "extract log entries from haraka log files",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint *.js test/*.js"
   },
   "repository": {
     "type": "git",
