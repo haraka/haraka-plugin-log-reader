@@ -6,7 +6,7 @@ var spawn = require('child_process').spawn;
 var log = '/var/log/haraka.log';
 var plugin;
 
-exports.register = function() {
+exports.register = function () {
     plugin = this;
     plugin.get_logreader_ini();
     plugin.load_karma_ini();
@@ -37,7 +37,7 @@ exports.load_karma_ini = function () {
     if (!plugin.karma_cfg.result_awards) return;
     if (!plugin.result_awards) plugin.result_awards = {};
 
-    Object.keys(plugin.karma_cfg.result_awards).forEach(function(anum) {
+    Object.keys(plugin.karma_cfg.result_awards).forEach(function (anum) {
         var parts = plugin.karma_cfg.result_awards[anum]
                         .replace(/\s+/, ' ')
                         .split(/(?:\s*\|\s*)/);
@@ -57,7 +57,7 @@ exports.get_rules = function (req, res) {
     res.send(JSON.stringify(plugin.result_awards));
 };
 
-exports.get_logs = function(req, res) {
+exports.get_logs = function (req, res) {
 
     var uuid  = req.params.uuid;
     if (!/\-/.test(uuid)) {
@@ -76,15 +76,13 @@ exports.get_logs = function(req, res) {
         matched += buffer.toString();
     });
 
-    child.stdout.on('end', function(err) {
+    child.stdout.on('end', function (err) {
         if (err) return res.send('<p>' + err + '</p>');
 
         var rawLogs = '';
         var lastKarmaLine;
         matched.split('\n').forEach(function (line) {
-            var trimmed = line
-                .replace(/node haraka\[[\d]+\]: \[[\w]+\] \[[A-F0-9\-\.]+\] /,
-                        '');
+            var trimmed = line.replace(/[A-F0-9\-\.]{12,40}/, '$UUID');
             rawLogs += trimmed + '<br>';
             if (/\[karma/.test(line) && /awards/.test(line)) {
                 lastKarmaLine = line;
@@ -156,6 +154,7 @@ function getResolutions (awardNums) {
     awards.sort(sortByAward).forEach(function (a) {
         if (!a.resolution) return;
         if (resolutionSeen[a.resolution]) return;
+        resolutionSeen[a.resolution] = true;
         listItems.push('<li>' + a.resolution + '</li>');
     });
     return listItems;
@@ -166,7 +165,7 @@ function getResolutions (awardNums) {
 //     // var child = spawn('grep', [ '-e', regex, file ]);
 //     var child = spawn('grep', [ string, file ]);
 //     child.stdout.on('data', function (buffer) { res += buffer.toString(); });
-//     child.stdout.on('end', function() { done(null, res); });
+//     child.stdout.on('end', function () { done(null, res); });
 // }
 
 function sortByAward (a, b) {
@@ -191,8 +190,7 @@ function htmlHead () {
 
 function htmlBody (uuid, awards, resolve) {
     /* jshint multistr: true */
-    var str = '<html> \
-        <body> \
+    var str = '<body> \
         <div class="tab-content"> \
         <h3>Sorry we blocked your message:</h3> \
         <p>Our filters mistook your server for a malicious computer attempting \
