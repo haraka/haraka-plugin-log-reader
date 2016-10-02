@@ -152,8 +152,10 @@ function getResolutions (awardNums) {
     });
 
     var listItems = [];
+    var resolutionSeen = {};
     awards.sort(sortByAward).forEach(function (a) {
         if (!a.resolution) return;
+        if (resolutionSeen[a.resolution]) return;
         listItems.push('<li>' + a.resolution + '</li>');
     });
     return listItems;
