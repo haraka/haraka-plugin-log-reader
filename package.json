@@ -1,7 +1,7 @@
 {
   "name": "haraka-plugin-log-reader",
-  "version": "1.0.0",
-  "description": "extract log entries from haraka log files",
+  "version": "1.0.1",
+  "description": "display log entries from haraka log files via HTTP",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
