@@ -4,7 +4,7 @@
 
 # haraka-plugin-log-reader
 
-extracts matching log entries from haraka log files
+extracts matching log entries from the haraka log file
 
 
 # Install
@@ -17,7 +17,7 @@ npm install -g haraka-plugin-log-reader
 
 ## Enable
 
-Add `haraka-plugin-log-reader` to your Haraka `config/plugins` file.
+Add `log-reader` to your Haraka `config/plugins` file.
 
 
 # Usage

@@ -82,7 +82,7 @@ exports.get_logs = function (req, res) {
     var rawLogs = '';
     var lastKarmaLine;
     matched.split('\n').forEach(function (line) {
-      var trimmed = line.replace(/[A-F0-9\-\.]{12,40}/, '$UUID');
+      var trimmed = line.replace(/\[[A-F0-9\-\.]{12,40}\] /, '');
       rawLogs += trimmed + '<br>';
       if (/\[karma/.test(line) && /awards/.test(line)) {
         lastKarmaLine = line;
