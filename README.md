@@ -11,13 +11,14 @@ extracts matching log entries from the haraka log file
 
 
 ````
-npm install -g haraka-plugin-log-reader
+cd /my/haraka/config/dir
+npm install haraka-plugin-log-reader
 ````
 
 
 ## Enable
 
-Add `log-reader` to your Haraka `config/plugins` file.
+Add `log-reader` to `haraka/config/plugins` file.
 
 
 # Usage
