@@ -1,0 +1,36 @@
+Nov  4 13:35:23 haraka haraka[66592]: [NOTICE] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [core] connect ip=167.89.87.200 port=21957 local_ip=172.16.15.9 local_port=25
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [karma] score: 0, good: 7, bad: 0, connections: 7, history: 7, pass:all_good
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [connect.p0f] os="Linux 3.1-3.10" link_type="Ethernet or modem" distance=8 total_conn=1
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [connect.fcrdns] ip=167.89.87.200 rdns="o14.m.reply1.ebay.com" rdns_len=1 fcrdns="o14.m.reply1.ebay.com" fcrdns_len=1 other_ips_len=0 invalid_tlds=0 generic_rdns=true
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [geoip] NA, US, CO, Boulder, 1100km
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [dnsbl] 
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [asn] asn: 11377, org: SendGrid, Inc., asn_score: 1897, asn_connections: 2811, asn_good: 2096, asn_bad: 199, pass:karma
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [spf] identity=helo ip=167.89.87.200 domain="o14.m.reply1.ebay.com" mfrom=<postmaster@o14.m.reply1.ebay.com> result=None
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [spf] scope: helo, result: None, domain: o14.m.reply1.ebay.com
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [tls] secured: cipher=ECDHE-RSA-AES256-GCM-SHA384 version=TLSv1/SSLv3 verified=false
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [core] hook=unrecognized_command plugin=tls function=upgrade_connection params="STARTTLS" retval=OK msg=""
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [spf] identity=helo ip=167.89.87.200 domain="o14.m.reply1.ebay.com" mfrom=<postmaster@o14.m.reply1.ebay.com> result=None
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4] [spf] scope: helo, result: None, domain: o14.m.reply1.ebay.com
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [spf] identity=mfrom ip=167.89.87.200 domain="m.reply1.ebay.com" mfrom=<bounces+1434781-0514-deb=simerson.net@m.reply1.ebay.com> result=Pass
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [spf] scope: mfrom, result: Pass, domain: m.reply1.ebay.com
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [rcpt_to.qmail_deliverable] not local
+Nov  4 13:35:24 haraka haraka[66592]: [NOTICE] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [core] sender <bounces+1434781-0514-deb=simerson.net@m.reply1.ebay.com> code=CONT msg=""
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [rcpt_to.qmail_deliverable] vpopmail dir
+Nov  4 13:35:24 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [core] hook=rcpt plugin=rcpt_to.qmail_deliverable function=hook_rcpt params="<***@simerson.net>" retval=OK msg=""
+Nov  4 13:35:24 haraka haraka[66592]: [NOTICE] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [core] recipient <***@simerson.net> code=OK msg="" sender="bounces+1434781-0514-deb=simerson.net@m.reply1.ebay.com"
+Nov  4 13:35:26 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [geoip] received=167.89.87.200 country=US
+Nov  4 13:35:26 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [geoip] received=66.135.198.141 country=US
+Nov  4 13:35:26 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [avg] time=42ms code=200 response="ok"
+Nov  4 13:35:27 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [clamd] pass:clean
+Nov  4 13:35:27 rspamd rspamd[4249]: <03d22c>; task; rspamd_message_parse: loaded message; id: <-aRBbr-nTv2mBj9euJ-XpQ@ismtpd0014p1las1.sendgrid.net>; queue-id: <3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1>; size: 33953; checksum: <a0d5088ce45c25aecd06abae80caf26d>
+Nov  4 13:35:32 rspamd rspamd[4249]: <03d22c>; task; rspamd_task_write_log: id: <-aRBbr-nTv2mBj9euJ-XpQ@ismtpd0014p1las1.sendgrid.net>, qid: <3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1>, ip: 167.89.87.200, from: <bounces+1434781-0514-deb=simerson.net@m.reply1.ebay.com>, (default: F (no action): [2.50/15.00] [HTML_SHORT_LINK_IMG_1(3.00),DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50),MIME_HTML_ONLY(0.20),R_SPF_ALLOW(-0.20),FORGED_SENDER_VERP_SRS(0.00),RCVD_IN_DNSWL_NONE(0.00),RWL_MAILSPIKE_POSSIBLE(0.00)]), len: 33953, time: 5099.756ms real, 9.254ms virtual, dns req: 38
+Nov  4 13:35:32 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [rspamd] is_spam: false, is_skipped: false, score: 2.5, required_score: 15, action: no action, RWL_MAILSPIKE_POSSIBLE: 0, RCVD_IN_DNSWL_NONE: 0, R_SPF_ALLOW: -0.2, HTML_SHORT_LINK_IMG_1: 3, MIME_HTML_ONLY: 0.2, FORGED_SENDER_VERP_SRS: 0, DMARC_POLICY_ALLOW_WITH_FAILURES: -0.5, messages: (SPF): spf allow
+Nov  4 13:35:35 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [spamassassin] status=No, score=-15.0, required=5.0, reject=0, tests="BAYES_00,DCC_CHECK,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,\r  HTML_IMAGE_RATIO_06,HTML_MESSAGE,MIME_HTML_ONLY,RCVD_IN_DNSWL_NONE,\r   RCVD_IN_MSPIKE_H2,RCVD_IN_RP_CERTIFIED,RCVD_IN_RP_SAFE,RP_MATCHES_RCVD,\r   SPF_PASS,USER_IN_DEF_DKIM_WL"
+Nov  4 13:35:35 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [dkim_verify] identity="@reply1.ebay.com" domain="reply1.ebay.com" selector="s1" result=pass 
+Nov  4 13:35:35 haraka haraka[66592]: [NOTICE] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [core] message mid="<-aRBbr-nTv2mBj9euJ-XpQ@ismtpd0014p1las1.sendgrid.net>" size=173692 rcpts=1/0/0 delay=8.925 code=CONT msg=""
+Nov  4 13:35:35 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [queue/smtp_forward] forwarding to 172.16.15.8:25
+Nov  4 13:35:35 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [core] hook=queue plugin=queue/smtp_forward function=hook_queue params="" retval=OK msg="ok 1478291735 qp 49341"
+Nov  4 13:35:35 haraka haraka[66592]: [NOTICE] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [core] queue code=OK msg="ok 1478291735 qp 49341 (3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1)"
+Nov  4 13:35:35 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [karma] score: 9, good: 7, bad: 0, connections: 7, history: 7, awards: 006,020,131,183,182,251,252,253,254, pass:all_good
+Nov  4 13:35:37 haraka haraka[66592]: [INFO] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [karma] score: 9, good: 7, bad: 0, connections: 7, history: 7, awards: 006,020,131,183,182,251,252,253,254, pass:all_good
+Nov  4 13:35:37 haraka haraka[66592]: [NOTICE] [3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1] [core] disconnect ip=167.89.87.200 rdns="o14.m.reply1.ebay.com" helo="o14.m.reply1.ebay.com" relay=N early=N esmtp=Y tls=Y pipe=N errors=0 txns=1 rcpts=1/0/0 msgs=1/0/0 bytes=173692 lr="" time=13.937
