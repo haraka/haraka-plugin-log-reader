@@ -67,41 +67,74 @@ exports.get_logs = function (req, res) {
     return res.send('<html><body>Invalid Request</body></html>');
   }
 
-  var matched = '';
+  // spawning a grep process is quite a lot faster than fs.read
+  // (yes, I benchmarked it)
+  exports.grepWithShell(log, uuid, function (err, matched) {
+    if (err) return res.send('<p>' + err + '</p>');
 
-    // spawning a grep process is quite a lot faster than fs.read
-    // (yes, I benchmarked it)
-  var child = spawn('grep', [ uuid, log ]);
+    exports.asHtml(uuid, matched, function (html) {
+      res.send(html);
+    });
+  });
+};
+
+exports.grepWithShell = function (file, uuid, done) {
+
+  var matched = '';
+  var searchString = uuid;
+
+  if (/\.[0-9]{1,2}$/.test(uuid)) {
+    // strip transaction off ID, so connection properties are included
+    searchString = uuid.replace(/\.[0-9]{1,2}$/, '');
+  }
+
+  // var child = spawn('grep', [ '-e', regex, file ]);
+  var child = spawn('grep', [ searchString, file ]);
   child.stdout.on('data', function (buffer) {
     matched += buffer.toString();
   });
 
   child.stdout.on('end', function (err) {
-    if (err) return res.send('<p>' + err + '</p>');
-
-    var rawLogs = '';
-    var lastKarmaLine;
-    matched.split('\n').forEach(function (line) {
-      var trimmed = line.replace(/\[[A-F0-9\-\.]{12,40}\] /, '');
-      rawLogs += trimmed + '<br>';
-      if (/\[karma/.test(line) && /awards/.test(line)) {
-        lastKarmaLine = line;
-      }
-    });
-
-    var awardNums = [];
-    if (lastKarmaLine) {
-      var bits = lastKarmaLine.match(/awards: ([0-9,]+)?\s*/);
-      if (bits && bits[1]) awardNums = bits[1].split(',');
-    }
-    var awards = getAwards(awardNums);
-    var resolv = getResolutions(awardNums);
-
-    var head = htmlHead();
-    var body = htmlBody(uuid, awards.join(''), resolv.join(''));
-    res.send(head + body + rawLogs + '</pre></div></body></html>');
+    done(err, matched);
   });
 };
+
+exports.asHtml = function (uuid, matched, done) {
+  var rawLogs = '';
+  var lastKarmaLine;
+  matched.split('\n').forEach(function (line) {
+
+    var transId;
+    var replaceString = '';
+    var uuidMatch = line.match(/ \[([A-F0-9\-\.]{12,40})\] /);
+    if (uuidMatch && uuidMatch[1]) {
+      transId = uuidMatch[1].match(/\.([0-9]{1,2})$/);
+    }
+    if (transId && transId[1]) replaceString = '[' + transId[1] + '] ';
+
+    var trimmed = line.replace(/\[[A-F0-9\-\.]{12,40}\] /, replaceString);
+    rawLogs += trimmed + '<br>';
+    if (/\[karma/.test(line) && /awards/.test(line)) {
+      lastKarmaLine = line;
+    }
+  });
+
+  var awardNums = [];
+  if (lastKarmaLine) {
+    var bits = lastKarmaLine.match(/awards: ([0-9,]+)?\s*/);
+    if (bits && bits[1]) awardNums = bits[1].split(',');
+  }
+
+  done(
+    htmlHead() +
+    htmlBody(
+      uuid,
+      getAwards(awardNums).join(''),
+      getResolutions(awardNums).join('')
+    ) +
+    rawLogs + '</pre></div></body></html>'
+  );
+}
 
 // exports.grepWithFs = function (file, regex, done) {
 //     var wantsRe = new RegExp(regex);
@@ -159,14 +192,6 @@ function getResolutions (awardNums) {
   });
   return listItems;
 }
-
-// function grepWithShell (file, string, done) {
-//     var res = '';
-//     // var child = spawn('grep', [ '-e', regex, file ]);
-//     var child = spawn('grep', [ string, file ]);
-//     child.stdout.on('data', function (buffer) { res += buffer.toString(); });
-//     child.stdout.on('end', function () { done(null, res); });
-// }
 
 function sortByAward (a, b) {
   if (parseFloat(b.award) > parseFloat(a.award)) return -1;
