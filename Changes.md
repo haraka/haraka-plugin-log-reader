@@ -1,3 +1,8 @@
+
+1.0.6 - 2017-01-23
+
+    * remove host & pid detail from syslog lines
+
 1.0.5 - 2016-11-04
 
     * display log entries for transactions
