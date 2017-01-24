@@ -113,6 +113,12 @@ exports.asHtml = function (uuid, matched, done) {
     if (transId && transId[1]) replaceString = '[' + transId[1] + '] ';
 
     var trimmed = line.replace(/\[[A-F0-9\-\.]{12,40}\] /, replaceString);
+
+    // strip syslog prepended host and PID
+    if ( / haraka\[[0-9]+\]: /.test(trimmed) ) {
+      trimmed = trimmed.replace(/(?: [a-z\.\-]+)? haraka\[[0-9]+\]: /, ' ');
+    }
+
     rawLogs += trimmed + '<br>';
     if (/\[karma/.test(line) && /awards/.test(line)) {
       lastKarmaLine = line;
