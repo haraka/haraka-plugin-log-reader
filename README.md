@@ -4,6 +4,8 @@
 
 # haraka-plugin-log-reader
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/haraka/haraka-plugin-log-reader.svg)](https://greenkeeper.io/)
+
 extracts matching log entries from the haraka log file
 
 
