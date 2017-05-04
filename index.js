@@ -89,7 +89,7 @@ exports.grepWithShell = function (file, uuid, done) {
   }
 
   // var child = spawn('grep', [ '-e', regex, file ]);
-  var child = spawn('grep', [ searchString, file ]);
+  var child = spawn('grep', [ '--text', searchString, file ]);
   child.stdout.on('data', function (buffer) {
     matched += buffer.toString();
   });

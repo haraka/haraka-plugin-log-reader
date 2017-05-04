@@ -1,4 +1,8 @@
 
+1.0.7 - 2017-05-04
+
+    * add --text flag to grep call, in case log file has binary chars
+
 1.0.6 - 2017-01-23
 
     * remove host & pid detail from syslog lines
