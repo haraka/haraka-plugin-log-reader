@@ -18,7 +18,7 @@ describe('register', function () {
 
   it('runs', function (done) {
     attach.register();
-        // console.log(attach.cfg);
+    // console.log(attach.cfg);
     done();
   });
 
@@ -50,7 +50,7 @@ describe('log.reader.ini', function () {
   });
 });
 
-describe('grepWithShell', function() {
+describe('grepWithShell', function () {
   it('reads matching connection entries from a log file', function (done) {
     var reader = new fixtures.plugin('index');
     reader.register();
@@ -98,7 +98,7 @@ describe('grepWithShell', function() {
 // the subsequent functions require the express res/req
 // those could be mocked up, along with some sample log files
 
-describe('get_rules', function() {
+describe('get_rules', function () {
   it.skip('returns rules section from karma.ini', function (done) {
     done();
   })

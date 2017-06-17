@@ -39,8 +39,9 @@ exports.load_karma_ini = function () {
 
   Object.keys(plugin.karma_cfg.result_awards).forEach(function (anum) {
     var parts = plugin.karma_cfg.result_awards[anum]
-                        .replace(/\s+/, ' ')
-                        .split(/(?:\s*\|\s*)/);
+      .replace(/\s+/, ' ')
+      .split(/(?:\s*\|\s*)/);
+
     plugin.result_awards[anum] = {
       pi_name    : parts[0],
       property   : parts[1],
@@ -59,7 +60,7 @@ exports.get_rules = function (req, res) {
 
 exports.get_logs = function (req, res) {
 
-  var uuid  = req.params.uuid;
+  let uuid = req.params.uuid;
   if (!/\-/.test(uuid)) {
     return res.send('<html><body>Invalid Request</body></html>');
   }
@@ -206,7 +207,6 @@ function sortByAward (a, b) {
 }
 
 function htmlHead () {
-    /* jshint multistr: true */
   var str = '<html> \
         <head> \
           <meta charset="utf-8"> \
@@ -220,7 +220,6 @@ function htmlHead () {
 }
 
 function htmlBody (uuid, awards, resolve) {
-    /* jshint multistr: true */
   var str = '<body> \
         <div class="tab-content"> \
         <h3>Sorry we blocked your message:</h3> \

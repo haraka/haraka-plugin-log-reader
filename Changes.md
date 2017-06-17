@@ -1,4 +1,9 @@
 
+1.0.8 - 2017-06-16
+
+    * depend on haraka-eslint for rules
+    * lint fixes
+
 1.0.7 - 2017-05-04
 
     * add --text flag to grep call, in case log file has binary chars
