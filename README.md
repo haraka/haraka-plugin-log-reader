@@ -1,7 +1,8 @@
 [![Build Status][ci-img]][ci-url]
-[![Code Coverage][cov-img]][cov-url]
+[![Windows Build Status][ci-win-img]][ci-win-url]
 [![Code Climate][clim-img]][clim-url]
 [![Greenkeeper badge][gk-img]][gk-url]
+<!--[![Code Coverage][cov-img]][cov-url]-->
 
 # haraka-plugin-log-reader
 
@@ -80,6 +81,8 @@ Our filters mistook your server for a malicious computer attempting to send spam
 
 [ci-img]: https://travis-ci.org/haraka/haraka-plugin-log-reader.svg
 [ci-url]: https://travis-ci.org/haraka/haraka-plugin-log-reader
+[ci-win-img]: https://ci.appveyor.com/api/projects/status/fv12m9n7h0wmcc7q?svg=true
+[ci-win-url]: https://ci.appveyor.com/project/msimerson/haraka-plugin-log-reader
 [cov-img]: https://codecov.io/github/haraka/haraka-plugin-log-reader/coverage.svg
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-log-reader
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-log-reader/badges/gpa.svg
