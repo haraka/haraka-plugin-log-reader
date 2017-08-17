@@ -1,40 +1,44 @@
 
-1.0.8 - 2017-06-16
+## 1.0.9 - 2017-08-17
 
-    * depend on haraka-eslint for rules
-    * lint fixes
+* also prune syslog hostname when no PID in entry
 
-1.0.7 - 2017-05-04
+## 1.0.8 - 2017-06-16
 
-    * add --text flag to grep call, in case log file has binary chars
+* depend on haraka-eslint for rules
+* lint fixes
 
-1.0.6 - 2017-01-23
+## 1.0.7 - 2017-05-04
 
-    * remove host & pid detail from syslog lines
+* add --text flag to grep call, in case log file has binary chars
 
-1.0.5 - 2016-11-04
+## 1.0.6 - 2017-01-23
 
-    * display log entries for transactions
-    * display just transaction ID in place of full UUID.id
-    * refactored most of get logs into grepWithShell & asHtml
-        * with test coverage for the latter two
+* remove host & pid detail from syslog lines
 
-1.0.4 - 2016-10-25
+## 1.0.5 - 2016-11-04
 
-    * remove useless $UUID token from display
+* display log entries for transactions
+* display just transaction ID in place of full UUID.id
+* refactored most of get logs into grepWithShell & asHtml
+    * with test coverage for the latter two
 
-Oct 2 12:57:42 2016
+## 1.0.4 - 2016-10-25
 
-    * trim uuids more reliably (#4)
+* remove useless $UUID token from display
 
-Oct 2 12:08:44 2016
+## Oct 2 12:57:42 2016
 
-    * Duplicate resolutions (#2)
-    * suppress duplicate actions
+* trim uuids more reliably (#4)
 
-Sep 29 23:10:33 2016
+## Oct 2 12:08:44 2016
 
-    * add missing eslint definition
-    * added README
-    * add .travis.yml
-    * initial commit
+* Duplicate resolutions (#2)
+* suppress duplicate actions
+
+## Sep 29 23:10:33 2016
+
+* add missing eslint definition
+* added README
+* add .travis.yml
+* initial commit

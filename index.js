@@ -115,9 +115,12 @@ exports.asHtml = function (uuid, matched, done) {
 
     var trimmed = line.replace(/\[[A-F0-9\-\.]{12,40}\] /, replaceString);
 
-    // strip syslog prepended host and PID
-    if ( / haraka\[[0-9]+\]: /.test(trimmed) ) {
+    // strip prepended hostname
+    if ( / haraka\[[0-9]+\]: /.test(trimmed) ) {    // with PID
       trimmed = trimmed.replace(/(?: [a-z\.\-]+)? haraka\[[0-9]+\]: /, ' ');
+    }
+    else if ( / haraka: \[/.test(trimmed) ) {       // w/o PID
+      trimmed = trimmed.replace(/(?: [a-z\.\-]+)? haraka: /, ' ');
     }
 
     rawLogs += trimmed + '<br>';
