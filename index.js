@@ -1,10 +1,10 @@
 'use strict';
 
 // node.js built-in modules
-var spawn = require('child_process').spawn;
+const spawn = require('child_process').spawn;
 
-var log = '/var/log/haraka.log';
-var plugin;
+let log = '/var/log/haraka.log';
+let plugin;
 
 exports.register = function () {
   plugin = this;
@@ -38,7 +38,7 @@ exports.load_karma_ini = function () {
   if (!plugin.result_awards) plugin.result_awards = {};
 
   Object.keys(plugin.karma_cfg.result_awards).forEach(function (anum) {
-    var parts = plugin.karma_cfg.result_awards[anum]
+    const parts = plugin.karma_cfg.result_awards[anum]
       .replace(/\s+/, ' ')
       .split(/(?:\s*\|\s*)/);
 
@@ -60,11 +60,11 @@ exports.get_rules = function (req, res) {
 
 exports.get_logs = function (req, res) {
 
-  let uuid = req.params.uuid;
-  if (!/\-/.test(uuid)) {
+  const uuid = req.params.uuid;
+  if (!/-/.test(uuid)) {
     return res.send('<html><body>Invalid Request</body></html>');
   }
-  if (!/^[0-9A-F\-\.]{12,40}$/.test(uuid)) {
+  if (!/^[0-9A-F\-.]{12,40}$/.test(uuid)) {
     return res.send('<html><body>Invalid Request</body></html>');
   }
 
@@ -81,8 +81,8 @@ exports.get_logs = function (req, res) {
 
 exports.grepWithShell = function (file, uuid, done) {
 
-  var matched = '';
-  var searchString = uuid;
+  let matched = '';
+  let searchString = uuid;
 
   if (/\.[0-9]{1,2}$/.test(uuid)) {
     // strip transaction off ID, so connection properties are included
@@ -90,7 +90,7 @@ exports.grepWithShell = function (file, uuid, done) {
   }
 
   // var child = spawn('grep', [ '-e', regex, file ]);
-  var child = spawn('grep', [ '--text', searchString, file ]);
+  const child = spawn('grep', [ '--text', searchString, file ]);
   child.stdout.on('data', function (buffer) {
     matched += buffer.toString();
   });
@@ -101,44 +101,58 @@ exports.grepWithShell = function (file, uuid, done) {
 };
 
 exports.asHtml = function (uuid, matched, done) {
-  var rawLogs = '';
-  var lastKarmaLine;
-  matched.split('\n').forEach(function (line) {
 
-    var transId;
-    var replaceString = '';
-    var uuidMatch = line.match(/ \[([A-F0-9\-\.]{12,40})\] /);
+  let rawLogs = ''
+  let lastKarmaLine
+  let monthDay = ''
+  const matchMonthDay = new RegExp('^([A-Z][a-z]{2}[ ]{1,2}[0-9]{1,2}) ');
+
+  matched.split('\n').forEach((line) => {
+
+    if (!line) return;
+
+    let transId;
+    let replaceString = '';
+
+    if (!monthDay) {
+      // console.log(line);
+      [, monthDay] = matchMonthDay.exec(line);
+    }
+
+    const uuidMatch = line.match(/ \[([A-F0-9\-.]{12,40})\] /);
     if (uuidMatch && uuidMatch[1]) {
       transId = uuidMatch[1].match(/\.([0-9]{1,2})$/);
     }
     if (transId && transId[1]) replaceString = '[' + transId[1] + '] ';
 
-    var trimmed = line.replace(/\[[A-F0-9\-\.]{12,40}\] /, replaceString);
+    let trimmed = line
+      .replace(/\[[A-F0-9\-.]{12,40}\] /, replaceString)  // UUID
+      .replace(matchMonthDay, '');                        // Mon DD
 
     // strip prepended hostname
     if ( / haraka\[[0-9]+\]: /.test(trimmed) ) {    // with PID
-      trimmed = trimmed.replace(/(?: [a-z\.\-]+)? haraka\[[0-9]+\]: /, ' ');
+      trimmed = trimmed.replace(/(?: [a-z.-]+)? haraka\[[0-9]+\]: /, ' ');
     }
     else if ( / haraka: \[/.test(trimmed) ) {       // w/o PID
-      trimmed = trimmed.replace(/(?: [a-z\.\-]+)? haraka: /, ' ');
+      trimmed = trimmed.replace(/(?: [a-z.-]+)? haraka: /, ' ');
     }
 
     rawLogs += trimmed + '<br>';
     if (/\[karma/.test(line) && /awards/.test(line)) {
       lastKarmaLine = line;
     }
-  });
+  })
 
-  var awardNums = [];
+  let awardNums = [];
   if (lastKarmaLine) {
-    var bits = lastKarmaLine.match(/awards: ([0-9,]+)?\s*/);
+    const bits = lastKarmaLine.match(/awards: ([0-9,]+)?\s*/);
     if (bits && bits[1]) awardNums = bits[1].split(',');
   }
 
   done(
     htmlHead() +
     htmlBody(
-      uuid,
+      `for connection ${uuid} on ${monthDay}`,
       getAwards(awardNums).join(''),
       getResolutions(awardNums).join('')
     ) +
@@ -163,16 +177,16 @@ exports.asHtml = function (uuid, matched, done) {
 function getAwards (awardNums) {
   if (!awardNums || awardNums.length === 0) return [];
 
-  var awards = [];
+  const awards = [];
   awardNums.forEach(function (a) {
     if (!a || !plugin.result_awards[a]) return;
     plugin.result_awards[a].id = a;
     awards.push(plugin.result_awards[a]);
   });
 
-  var listItems = [];
+  const listItems = [];
   awards.sort(sortByAward).forEach(function (a) {
-    var start = '<li> ' + a.award + ',  ';
+    const start = '<li> ' + a.award + ',  ';
     if (a.reason) {
       listItems.push(start + a.reason + ' (' + a.value + ')</li>');
       return;
@@ -186,14 +200,14 @@ function getAwards (awardNums) {
 function getResolutions (awardNums) {
   if (!awardNums || awardNums.length === 0) return [];
 
-  var awards = [];
+  const awards = [];
   awardNums.forEach(function (a) {
     if (!a || !plugin.result_awards[a]) return;
     awards.push(plugin.result_awards[a]);
   });
 
-  var listItems = [];
-  var resolutionSeen = {};
+  const listItems = [];
+  const resolutionSeen = {};
   awards.sort(sortByAward).forEach(function (a) {
     if (!a.resolution) return;
     if (resolutionSeen[a.resolution]) return;
@@ -210,7 +224,7 @@ function sortByAward (a, b) {
 }
 
 function htmlHead () {
-  var str = '<html> \
+  const str = '<html> \
         <head> \
           <meta charset="utf-8"> \
           <link rel="stylesheet" href="/haraka/css/bootstrap.min.css"> \
@@ -223,7 +237,7 @@ function htmlHead () {
 }
 
 function htmlBody (uuid, awards, resolve) {
-  var str = '<body> \
+  let str = '<body> \
         <div class="tab-content"> \
         <h3>Sorry we blocked your message:</h3> \
         <p>Our filters mistook your server for a malicious computer attempting \

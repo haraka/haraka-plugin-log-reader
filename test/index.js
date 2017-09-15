@@ -2,61 +2,66 @@
 
 process.env.NODE_ENV = 'test';
 
-var assert   = require('assert');
-// var fs       = require('fs');
-var path     = require('path');
+const assert   = require('assert');
+const path     = require('path');
 
-var fixtures = require('haraka-test-fixtures');
+const fixtures = require('haraka-test-fixtures');
 
-describe('register', function () {
-  var attach = new fixtures.plugin('index');
+beforeEach((done) => {
+  this.reader = new fixtures.plugin('index')
+  done()
+})
 
-  it('is a function', function (done) {
-    assert.equal('function', typeof attach.register);
-    done();
-  });
+describe('register', () => {
 
-  it('runs', function (done) {
-    attach.register();
-    // console.log(attach.cfg);
-    done();
-  });
+  it('is a function', (done) => {
+    assert.equal('function', typeof this.reader.register)
+    done()
+  })
 
-  it('loads log.reader.ini', function (done) {
-    attach.register();
-    assert.deepEqual(attach.cfg, {
+  it('runs', (done) => {
+    this.reader.register()
+    // console.log(reader.cfg)
+    done()
+  })
+
+  it('loads log.reader.ini', (done) => {
+    this.reader.register()
+    assert.deepEqual(this.reader.cfg, {
       main: {},
       log: {
         file: '/var/log/haraka.log'
       }
-    });
-    done();
-  });
+    })
+    done()
+  })
 
-  it('loads karma.ini', function (done) {
-    attach.register();
-    assert.equal(attach.karma_cfg.tarpit.delay, 0);
-    done();
-  });
-});
+  it('loads karma.ini', (done) => {
+    this.reader.register()
+    assert.equal(this.reader.karma_cfg.tarpit.delay, 0)
+    done()
+  })
+})
 
-describe('log.reader.ini', function () {
-  var reader = new fixtures.plugin('index');
+describe('log.reader.ini', () => {
+  it('has a log section', (done) => {
+    this.reader.register()
+    assert.ok(this.reader.cfg.log.file)
+    done()
+  })
+})
 
-  it('has a log section', function (done) {
-    reader.register();
-    assert.ok(reader.cfg.log.file);
-    done();
-  });
-});
+describe('grepWithShell', () => {
 
-describe('grepWithShell', function () {
-  it('reads matching connection entries from a log file', function (done) {
-    var reader = new fixtures.plugin('index');
-    reader.register();
+  beforeEach((done) => {
+    this.reader = new fixtures.plugin('index')
+    this.reader.register();
+    done()
+  })
 
-    var logfile = path.join('test','fixtures','haraka.log');
-    reader.grepWithShell(logfile, '3E6A027F-8307-4DA4-B105-2A39EC4B58D4', function (err, r) {
+  it('reads matching connection entries from a log file', (done) => {
+    const logfile = path.join('test','fixtures','haraka.log');
+    this.reader.grepWithShell(logfile, '3E6A027F-8307-4DA4-B105-2A39EC4B58D4', (err, r) => {
       assert.ifError(err);
       // console.log(r);
       assert.equal(r.split('\n').length - 1, 36);
@@ -64,12 +69,9 @@ describe('grepWithShell', function () {
     });
   });
 
-  it('reads matching transaction entries from a log file', function (done) {
-    var reader = new fixtures.plugin('index');
-    reader.register();
-
-    var logfile = path.join('test','fixtures','haraka.log');
-    reader.grepWithShell(logfile, '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1', function (err, r) {
+  it('reads matching transaction entries from a log file', (done) => {
+    const logfile = path.join('test','fixtures','haraka.log');
+    this.reader.grepWithShell(logfile, '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1', (err, r) => {
       assert.ifError(err);
       // console.log(r);
       assert.equal(r.split('\n').length - 1, 36);
@@ -77,15 +79,12 @@ describe('grepWithShell', function () {
     });
   });
 
-  it('formats matching entries as HTML', function (done) {
-    var reader = new fixtures.plugin('index');
-    reader.register();
-
-    var uuid = '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1';
-    var logfile = path.join('test','fixtures','haraka.log');
-    reader.grepWithShell(logfile, uuid, function (err, r) {
+  it('formats matching entries as HTML', (done) => {
+    const uuid = '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1';
+    const logfile = path.join('test','fixtures','haraka.log');
+    this.reader.grepWithShell(logfile, uuid, (err, r) => {
       assert.ifError(err);
-      reader.asHtml(uuid, r, function (html) {
+      this.reader.asHtml(uuid, r, (html) => {
         // console.log(html);
         assert.ok(/^<html>/.test(html));
         assert.ok(/<\/html>$/.test(html));
@@ -95,11 +94,32 @@ describe('grepWithShell', function () {
   });
 });
 
+describe('asHtml', () => {
+  beforeEach((done) => {
+    this.reader = new fixtures.plugin('index')
+    this.reader.register();
+    done()
+  })
+
+  it('formats a block of log lines for HTML presentation', (done) => {
+    const uuid = '9613CD00-7145-4ABC-8CA8-79CD9E39BB4F'
+    const logfile = path.join('test','fixtures','haraka.log');
+    this.reader.grepWithShell(logfile, uuid, (err, r) => {
+      this.reader.asHtml(uuid, r, (html) => {
+        assert.ok(/^<html>/.test(html))
+        assert.ok(/<\/html>/.test(html))
+        // console.log(html);
+        done()
+      })
+    })
+  })
+})
+
 // the subsequent functions require the express res/req
 // those could be mocked up, along with some sample log files
 
-describe('get_rules', function () {
-  it.skip('returns rules section from karma.ini', function (done) {
+describe('get_rules', () => {
+  it.skip('returns rules section from karma.ini', (done) => {
     done();
   })
-});
+})
