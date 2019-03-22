@@ -1,4 +1,10 @@
 
+## 1.0.10 - 2019-03-22
+
+* Add an 'if' to "blocked message" HTML header
+* CI testing updates (node.js versions)
+* moved config/karma.ini to test/config/karma.ini
+
 ## 1.0.9 - 2017-08-17
 
 * also prune syslog hostname when no PID in entry
