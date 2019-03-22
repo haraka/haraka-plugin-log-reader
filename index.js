@@ -10,29 +10,29 @@ exports.register = function () {
   plugin = this;
   plugin.get_logreader_ini();
   plugin.load_karma_ini();
-};
+}
 
 exports.hook_init_http = function (next, server) {
   server.http.app.use('/logs/:uuid', exports.get_logs);
   server.http.app.use('/karma/rules', exports.get_rules);
-  return next();
-};
+  next();
+}
 
 exports.get_logreader_ini = function () {
   plugin = this;
   plugin.cfg = plugin.config.get('log.reader.ini', function () {
     plugin.get_logreader_ini();
-  });
+  })
 
   if (plugin.cfg.log && plugin.cfg.log.file) {
     log = plugin.cfg.log.file;
   }
-};
+}
 
 exports.load_karma_ini = function () {
   plugin.karma_cfg = plugin.config.get('karma.ini', function () {
     plugin.load_karma_ini();
-  });
+  })
 
   if (!plugin.karma_cfg.result_awards) return;
   if (!plugin.result_awards) plugin.result_awards = {};
@@ -52,11 +52,11 @@ exports.load_karma_ini = function () {
       resolution : parts[6],
     };
   });
-};
+}
 
 exports.get_rules = function (req, res) {
   res.send(JSON.stringify(plugin.result_awards));
-};
+}
 
 exports.get_logs = function (req, res) {
 
@@ -77,7 +77,7 @@ exports.get_logs = function (req, res) {
       res.send(html);
     });
   });
-};
+}
 
 exports.grepWithShell = function (file, uuid, done) {
 
@@ -239,13 +239,13 @@ function htmlHead () {
 function htmlBody (uuid, awards, resolve) {
   let str = '<body> \
         <div class="tab-content"> \
-        <h3>Sorry we blocked your message:</h3> \
+        <h3>Sorry if we blocked your message:</h3> \
         <p>Our filters mistook your server for a malicious computer attempting \
         to send spam. To improve your mail servers reputation, please contact \
         your IT helpdesk or Systems Administrator and ask them for help.</p>';
 
   if (awards) {
-    str += '<hr><h3>Policy Rules</h3> \
+    str += '<hr><h3>Policy Rules Matched</h3> \
         <ul>' + awards + '</ul>';
   }
 

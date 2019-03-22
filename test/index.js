@@ -38,6 +38,8 @@ describe('register', () => {
 
   it('loads karma.ini', (done) => {
     this.reader.register()
+    this.reader.config = this.reader.config.module_config(path.resolve('test'));
+    this.reader.load_karma_ini()
     assert.equal(this.reader.karma_cfg.tarpit.delay, 0)
     done()
   })
@@ -56,6 +58,8 @@ describe('grepWithShell', () => {
   beforeEach((done) => {
     this.reader = new fixtures.plugin('index')
     this.reader.register();
+    this.reader.config = this.reader.config.module_config(path.resolve('test'));
+    this.reader.load_karma_ini()
     done()
   })
 
@@ -66,8 +70,8 @@ describe('grepWithShell', () => {
       // console.log(r);
       assert.equal(r.split('\n').length - 1, 36);
       done();
-    });
-  });
+    })
+  })
 
   it('reads matching transaction entries from a log file', (done) => {
     const logfile = path.join('test','fixtures','haraka.log');
@@ -76,8 +80,8 @@ describe('grepWithShell', () => {
       // console.log(r);
       assert.equal(r.split('\n').length - 1, 36);
       done();
-    });
-  });
+    })
+  })
 
   it('formats matching entries as HTML', (done) => {
     const uuid = '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1';
@@ -89,15 +93,17 @@ describe('grepWithShell', () => {
         assert.ok(/^<html>/.test(html));
         assert.ok(/<\/html>$/.test(html));
         done();
-      });
-    });
-  });
-});
+      })
+    })
+  })
+})
 
 describe('asHtml', () => {
   beforeEach((done) => {
     this.reader = new fixtures.plugin('index')
     this.reader.register();
+    this.reader.config = this.reader.config.module_config(path.resolve('test'));
+    this.reader.load_karma_ini()
     done()
   })
 
