@@ -4,10 +4,10 @@
   "description": "display log entries from haraka log files via HTTP",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha",
-    "lint": "./node_modules/.bin/eslint *.js test",
-    "lintfix": "./node_modules/.bin/eslint --fix *.js test",
-    "cover": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha"
+    "test": "npx mocha",
+    "lint": "npx eslint *.js test",
+    "lintfix": "npx eslint --fix *.js test",
+    "cover": "npx istanbul cover npx mocha"
   },
   "repository": {
     "type": "git",
