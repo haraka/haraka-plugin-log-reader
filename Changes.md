@@ -1,7 +1,7 @@
 
 ## 1.0.11 - 2022-03-31
 
-- switch CI to github actions
+- node 12 EOL, drop testing.
 
 
 ## 1.0.10 - 2019-03-22
