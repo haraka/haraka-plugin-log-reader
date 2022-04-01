@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/haraka/haraka-plugin-log-reader#readme",
   "devDependencies": {
-    "eslint": ">=8",
+    "eslint": "^8",
     "eslint-plugin-haraka": "*",
     "haraka-test-fixtures": "*",
     "mocha": "*"
