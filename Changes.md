@@ -1,4 +1,9 @@
 
+## 1.0.11 - 2022-03-31
+
+- node 12 EOL, drop testing.
+
+
 ## 1.0.10 - 2019-03-22
 
 * Add an 'if' to "blocked message" HTML header

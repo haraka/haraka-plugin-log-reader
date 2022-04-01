@@ -1,6 +1,10 @@
+
 name: Lint
 
 on: [ push ]
+
+env:
+  CI: true
 
 jobs:
 
@@ -10,17 +14,20 @@ jobs:
 
     strategy:
       matrix:
-        node-version:
-          - '12'
+        node-version: [ 14 ]
 
     steps:
     - uses: actions/checkout@v2
+      name: Checkout Module
+      with:
+        fetch-depth: 1
+
     - uses: actions/setup-node@v2
-      name: Node.js ${{ matrix.node-version }}
+      name: Use Node.js ${{ matrix.node-version }}
       with:
         node-version: ${{ matrix.node-version }}
 
     - run: npm install
-    - run: npm run lint
-      env:
-        CI: true
+
+    - name: Lint
+      run: npm run lint
