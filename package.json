@@ -1,13 +1,14 @@
 {
   "name": "haraka-plugin-log-reader",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "display log entries from haraka log files via HTTP",
   "main": "index.js",
   "scripts": {
     "test": "npx mocha",
     "lint": "npx eslint *.js test",
     "lintfix": "npx eslint --fix *.js test",
-    "cover": "npx istanbul cover npx mocha"
+    "cover": "npx istanbul cover npm test",
+    "versions": "npx dependency-version-checker check"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,7 @@
   },
   "homepage": "https://github.com/haraka/haraka-plugin-log-reader#readme",
   "devDependencies": {
-    "eslint": "*",
+    "eslint": ">=8",
     "eslint-plugin-haraka": "*",
     "haraka-test-fixtures": "*",
     "mocha": "*"

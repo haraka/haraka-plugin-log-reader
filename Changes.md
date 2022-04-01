@@ -1,4 +1,9 @@
 
+## 1.0.11 - 2022-03-31
+
+- switch CI to github actions
+
+
 ## 1.0.10 - 2019-03-22
 
 * Add an 'if' to "blocked message" HTML header

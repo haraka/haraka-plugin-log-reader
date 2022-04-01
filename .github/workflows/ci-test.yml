@@ -1,6 +1,11 @@
+
 name: Tests
 
 on: [ push ]
+
+env:
+  CI: true
+  NODE_OPTIONS: --max-old-space-size=1536
 
 jobs:
 
@@ -10,23 +15,22 @@ jobs:
 
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        node-version:
-          - 12
-          - 14
-          - 16
+        os: [ ubuntu-latest windows-latest ]
+        node-version: [ 14.x, 16.x ]
       fail-fast: false
 
     steps:
     - uses: actions/checkout@v2
+      name: Checkout Module
+      with:
+        fetch-depth: 1
+
     - uses: actions/setup-node@v2
       name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
       with:
         node-version: ${{ matrix.node-version }}
 
     - run: npm install
-    - run: npm test
-      env:
-        CI: true
+
+    - name: Run test suite
+      run: npm run test

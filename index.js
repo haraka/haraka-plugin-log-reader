@@ -115,8 +115,13 @@ exports.asHtml = function (uuid, matched, done) {
     let replaceString = '';
 
     if (!monthDay) {
-      // console.log(line);
-      [, monthDay] = matchMonthDay.exec(line);
+      try {
+        [, monthDay] = matchMonthDay.exec(line)
+      }
+      catch (err) {
+        plugin.loginfo(line)
+        plugin.logerror(err)
+      }
     }
 
     const uuidMatch = line.match(/ \[([A-F0-9\-.]{12,40})\] /);

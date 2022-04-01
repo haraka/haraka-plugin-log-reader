@@ -1,8 +1,6 @@
 [![Build Status][ci-img]][ci-url]
 [![Windows Build Status][ci-win-img]][ci-win-url]
 [![Code Climate][clim-img]][clim-url]
-[![Greenkeeper badge][gk-img]][gk-url]
-<!--[![Code Coverage][cov-img]][cov-url]-->
 
 # haraka-plugin-log-reader
 
@@ -89,5 +87,3 @@ Our filters mistook your server for a malicious computer attempting to send spam
 [clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-log-reader
 [npm-img]: https://nodei.co/npm/haraka-plugin-log-reader.png
 [npm-url]: https://www.npmjs.com/package/haraka-plugin-log-reader
-[gk-img]: https://badges.greenkeeper.io/haraka/haraka-plugin-log-reader.svg
-[gk-url]: https://greenkeeper.io/
