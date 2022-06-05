@@ -76,8 +76,8 @@ Our filters mistook your server for a malicious computer attempting to send spam
 </pre></html>
 
 
-[ci-img]: https://github.com/haraka/haraka-plugin-log-reader/actions/workflows/ci-test.yml/badge.svg
-[ci-url]: https://github.com/haraka/haraka-plugin-log-reader/actions/workflows/ci-test.yml
+[ci-img]: https://github.com/haraka/haraka-plugin-log-reader/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/haraka/haraka-plugin-log-reader/actions/workflows/ci.yml
 [cov-img]: https://codecov.io/github/haraka/haraka-plugin-log-reader/coverage.svg
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-log-reader
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-log-reader/badges/gpa.svg
