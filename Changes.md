@@ -1,4 +1,22 @@
+
 ### Unreleased
+
+
+### [1.0.12] - 2022-06-05
+
+#### Added
+
+- 
+
+#### Fixed
+
+- 
+
+#### Changed
+
+- 
+- ci: update GHA workflow with shared
+- ci: add submodule .release
 
 
 ### 1.0.11 - 2022-03-31
@@ -64,3 +82,6 @@
 * added README
 * add .travis.yml
 * initial commit
+
+
+[1.0.12]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/1.0.12
