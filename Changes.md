@@ -4,17 +4,6 @@
 
 ### [1.0.12] - 2022-06-05
 
-#### Added
-
-- 
-
-#### Fixed
-
-- 
-
-#### Changed
-
-- 
 - ci: update GHA workflow with shared
 - ci: add submodule .release
 
