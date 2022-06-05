@@ -1,5 +1,12 @@
 ### Unreleased
 
+
+### [1.0.13] - 2022-06-05
+
+- doc(README): update CI badge URL
+- ci: update dependabot config to production only
+
+
 ### [1.0.12] - 2022-06-05
 
 - ci: update GHA workflow with shared
@@ -72,3 +79,4 @@
 
 
 [1.0.12]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/1.0.12
+[1.0.13]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/1.0.13
