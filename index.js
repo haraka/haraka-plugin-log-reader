@@ -7,6 +7,7 @@ let log = '/var/log/haraka.log';
 let plugin;
 
 exports.register = function () {
+  plugin = this;
   this.get_logreader_ini();
   this.load_karma_ini();
 }
@@ -18,7 +19,6 @@ exports.hook_init_http = function (next, server) {
 }
 
 exports.get_logreader_ini = function () {
-  plugin = this;
   plugin.cfg = plugin.config.get('log.reader.ini', function () {
     plugin.get_logreader_ini();
   })
