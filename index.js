@@ -8,8 +8,8 @@ let plugin;
 
 exports.register = function () {
   plugin = this;
-  plugin.get_logreader_ini();
-  plugin.load_karma_ini();
+  this.get_logreader_ini();
+  this.load_karma_ini();
 }
 
 exports.hook_init_http = function (next, server) {
@@ -19,7 +19,6 @@ exports.hook_init_http = function (next, server) {
 }
 
 exports.get_logreader_ini = function () {
-  plugin = this;
   plugin.cfg = plugin.config.get('log.reader.ini', function () {
     plugin.get_logreader_ini();
   })
@@ -71,7 +70,7 @@ exports.get_logs = function (req, res) {
   // spawning a grep process is quite a lot faster than fs.read
   // (yes, I benchmarked it)
   exports.grepWithShell(log, uuid, function (err, matched) {
-    if (err) return res.send('<p>' + err + '</p>');
+    if (err) return res.send(`<p>${err}</p>`);
 
     exports.asHtml(uuid, matched, function (html) {
       res.send(html);
@@ -128,7 +127,7 @@ exports.asHtml = function (uuid, matched, done) {
     if (uuidMatch && uuidMatch[1]) {
       transId = uuidMatch[1].match(/\.([0-9]{1,2})$/);
     }
-    if (transId && transId[1]) replaceString = '[' + transId[1] + '] ';
+    if (transId && transId[1]) replaceString = `[${transId[1]}] `;
 
     let trimmed = line
       .replace(/\[[A-F0-9\-.]{12,40}\] /, replaceString)  // UUID
@@ -142,7 +141,7 @@ exports.asHtml = function (uuid, matched, done) {
       trimmed = trimmed.replace(/(?: [a-z.-]+)? haraka: /, ' ');
     }
 
-    rawLogs += trimmed + '<br>';
+    rawLogs += `${trimmed}<br>`;
     if (/\[karma/.test(line) && /awards/.test(line)) {
       lastKarmaLine = line;
     }
@@ -155,22 +154,22 @@ exports.asHtml = function (uuid, matched, done) {
   }
 
   done(
-    htmlHead() +
+    `${htmlHead() +
     htmlBody(
       `for connection ${uuid} on ${monthDay}`,
       getAwards(awardNums).join(''),
       getResolutions(awardNums).join('')
     ) +
-    rawLogs + '</pre></div></body></html>'
+    rawLogs}</pre></div></body></html>`
   );
 }
 
 // exports.grepWithFs = function (file, regex, done) {
-//     var wantsRe = new RegExp(regex);
-//     var fsOpts = { flag: 'r', encoding: 'utf8' };
+//     const wantsRe = new RegExp(regex);
+//     const fsOpts = { flag: 'r', encoding: 'utf8' };
 //     require('fs').readFile(log, fsOpts, function (err, data) {
 //         if (err) throw (err);
-//         var res = '';
+//         let res = '';
 //         data.toString().split(/\n/).forEach(function (line) {
 //             if (wantsRe && !wantsRe.test(line)) return;
 //             res += line + '\n';
@@ -191,13 +190,12 @@ function getAwards (awardNums) {
 
   const listItems = [];
   awards.sort(sortByAward).forEach(function (a) {
-    const start = '<li> ' + a.award + ',  ';
+    const start = `<li> ${a.award},  `;
     if (a.reason) {
-      listItems.push(start + a.reason + ' (' + a.value + ')</li>');
+      listItems.push(`${start + a.reason} (${a.value})</li>`);
       return;
     }
-    listItems.push(start + a.pi_name + ' ' + a.property +
-                ' ' + a.value + '</li>');
+    listItems.push(`${start + a.pi_name} ${a.property} ${a.value}</li>`);
   });
   return listItems;
 }
@@ -217,7 +215,7 @@ function getResolutions (awardNums) {
     if (!a.resolution) return;
     if (resolutionSeen[a.resolution]) return;
     resolutionSeen[a.resolution] = true;
-    listItems.push('<li>' + a.resolution + '</li>');
+    listItems.push(`<li>${a.resolution}</li>`);
   });
   return listItems;
 }
@@ -229,16 +227,15 @@ function sortByAward (a, b) {
 }
 
 function htmlHead () {
-  const str = '<html> \
-        <head> \
-          <meta charset="utf-8"> \
-          <link rel="stylesheet" href="/haraka/css/bootstrap.min.css"> \
-          <link rel="stylesheet" href="/haraka/css/bootstrap-theme.min.css"> \
-          <style> \
-            div { padding: 1em; } \
-          </style> \
-        </head>';
-  return str;
+  return '<html> \
+    <head> \
+      <meta charset="utf-8"> \
+      <link rel="stylesheet" href="/haraka/css/bootstrap.min.css"> \
+      <link rel="stylesheet" href="/haraka/css/bootstrap-theme.min.css"> \
+      <style> \
+        div { padding: 1em; } \
+      </style> \
+    </head>';
 }
 
 function htmlBody (uuid, awards, resolve) {
@@ -250,19 +247,19 @@ function htmlBody (uuid, awards, resolve) {
         your IT helpdesk or Systems Administrator and ask them for help.</p>';
 
   if (awards) {
-    str += '<hr><h3>Policy Rules Matched</h3> \
-        <ul>' + awards + '</ul>';
+    str += `<hr><h3>Policy Rules Matched</h3> \
+        <ul>${awards}</ul>`;
   }
 
   if (resolve) {
-    str += '<hr><h3>Steps to Resolve</h3> \
-        <ul>' + resolve + '</ul>';
+    str += `<hr><h3>Steps to Resolve</h3> \
+        <ul>${resolve}</ul>`;
   }
 
-  str += '<hr> \
+  str += `<hr> \
         <h3>Raw Logs</h3> \
-        <p>' + uuid + '</p> \
+        <p>${uuid}</p> \
         <pre> \
-        \n';
+        \n`;
   return str;
 }

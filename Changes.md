@@ -1,6 +1,13 @@
 ### Unreleased
 
 
+### [1.0.14] - 2023-12-12
+
+- style: remove useless variable
+- ci(publish): constrain to when package.json changes
+- ci: run on PR
+
+
 ### [1.0.13] - 2022-06-05
 
 - doc(README): update CI badge URL
@@ -80,3 +87,4 @@
 
 [1.0.12]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/1.0.12
 [1.0.13]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/1.0.13
+[1.0.14]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/1.0.14
