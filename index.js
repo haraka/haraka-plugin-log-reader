@@ -7,9 +7,8 @@ let log = '/var/log/haraka.log';
 let plugin;
 
 exports.register = function () {
-  plugin = this;
-  plugin.get_logreader_ini();
-  plugin.load_karma_ini();
+  this.get_logreader_ini();
+  this.load_karma_ini();
 }
 
 exports.hook_init_http = function (next, server) {
@@ -166,11 +165,11 @@ exports.asHtml = function (uuid, matched, done) {
 }
 
 // exports.grepWithFs = function (file, regex, done) {
-//     var wantsRe = new RegExp(regex);
-//     var fsOpts = { flag: 'r', encoding: 'utf8' };
+//     const wantsRe = new RegExp(regex);
+//     const fsOpts = { flag: 'r', encoding: 'utf8' };
 //     require('fs').readFile(log, fsOpts, function (err, data) {
 //         if (err) throw (err);
-//         var res = '';
+//         let res = '';
 //         data.toString().split(/\n/).forEach(function (line) {
 //             if (wantsRe && !wantsRe.test(line)) return;
 //             res += line + '\n';
@@ -229,16 +228,15 @@ function sortByAward (a, b) {
 }
 
 function htmlHead () {
-  const str = '<html> \
-        <head> \
-          <meta charset="utf-8"> \
-          <link rel="stylesheet" href="/haraka/css/bootstrap.min.css"> \
-          <link rel="stylesheet" href="/haraka/css/bootstrap-theme.min.css"> \
-          <style> \
-            div { padding: 1em; } \
-          </style> \
-        </head>';
-  return str;
+  return '<html> \
+    <head> \
+      <meta charset="utf-8"> \
+      <link rel="stylesheet" href="/haraka/css/bootstrap.min.css"> \
+      <link rel="stylesheet" href="/haraka/css/bootstrap-theme.min.css"> \
+      <style> \
+        div { padding: 1em; } \
+      </style> \
+    </head>';
 }
 
 function htmlBody (uuid, awards, resolve) {
