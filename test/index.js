@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'test'
 
-const assert   = require('assert');
-const path     = require('path');
+const assert = require('assert')
+const path = require('path')
 
-const fixtures = require('haraka-test-fixtures');
+const fixtures = require('haraka-test-fixtures')
 
 beforeEach((done) => {
   this.reader = new fixtures.plugin('index')
@@ -13,7 +13,6 @@ beforeEach((done) => {
 })
 
 describe('register', () => {
-
   it('is a function', (done) => {
     assert.equal('function', typeof this.reader.register)
     done()
@@ -30,15 +29,15 @@ describe('register', () => {
     assert.deepEqual(this.reader.cfg, {
       main: {},
       log: {
-        file: '/var/log/haraka.log'
-      }
+        file: '/var/log/haraka.log',
+      },
     })
     done()
   })
 
   it('loads karma.ini', (done) => {
     this.reader.register()
-    this.reader.config = this.reader.config.module_config(path.resolve('test'));
+    this.reader.config = this.reader.config.module_config(path.resolve('test'))
     this.reader.load_karma_ini()
     assert.equal(this.reader.karma_cfg.tarpit.delay, 0)
     done()
@@ -54,45 +53,52 @@ describe('log.reader.ini', () => {
 })
 
 describe('grepWithShell', () => {
-
   beforeEach((done) => {
     this.reader = new fixtures.plugin('index')
-    this.reader.register();
-    this.reader.config = this.reader.config.module_config(path.resolve('test'));
+    this.reader.register()
+    this.reader.config = this.reader.config.module_config(path.resolve('test'))
     this.reader.load_karma_ini()
     done()
   })
 
   it('reads matching connection entries from a log file', (done) => {
-    const logfile = path.join('test','fixtures','haraka.log');
-    this.reader.grepWithShell(logfile, '3E6A027F-8307-4DA4-B105-2A39EC4B58D4', (err, r) => {
-      assert.ifError(err);
-      // console.log(r);
-      assert.equal(r.split('\n').length - 1, 36);
-      done();
-    })
+    const logfile = path.join('test', 'fixtures', 'haraka.log')
+    this.reader.grepWithShell(
+      logfile,
+      '3E6A027F-8307-4DA4-B105-2A39EC4B58D4',
+      (err, r) => {
+        assert.ifError(err)
+        // console.log(r);
+        assert.equal(r.split('\n').length - 1, 36)
+        done()
+      },
+    )
   })
 
   it('reads matching transaction entries from a log file', (done) => {
-    const logfile = path.join('test','fixtures','haraka.log');
-    this.reader.grepWithShell(logfile, '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1', (err, r) => {
-      assert.ifError(err);
-      // console.log(r);
-      assert.equal(r.split('\n').length - 1, 36);
-      done();
-    })
+    const logfile = path.join('test', 'fixtures', 'haraka.log')
+    this.reader.grepWithShell(
+      logfile,
+      '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1',
+      (err, r) => {
+        assert.ifError(err)
+        // console.log(r);
+        assert.equal(r.split('\n').length - 1, 36)
+        done()
+      },
+    )
   })
 
   it('formats matching entries as HTML', (done) => {
-    const uuid = '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1';
-    const logfile = path.join('test','fixtures','haraka.log');
+    const uuid = '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1'
+    const logfile = path.join('test', 'fixtures', 'haraka.log')
     this.reader.grepWithShell(logfile, uuid, (err, r) => {
-      assert.ifError(err);
+      assert.ifError(err)
       this.reader.asHtml(uuid, r, (html) => {
         // console.log(html);
-        assert.ok(/^<html>/.test(html));
-        assert.ok(/<\/html>$/.test(html));
-        done();
+        assert.ok(/^<html>/.test(html))
+        assert.ok(/<\/html>$/.test(html))
+        done()
       })
     })
   })
@@ -101,15 +107,15 @@ describe('grepWithShell', () => {
 describe('asHtml', () => {
   beforeEach((done) => {
     this.reader = new fixtures.plugin('index')
-    this.reader.register();
-    this.reader.config = this.reader.config.module_config(path.resolve('test'));
+    this.reader.register()
+    this.reader.config = this.reader.config.module_config(path.resolve('test'))
     this.reader.load_karma_ini()
     done()
   })
 
   it('formats a block of log lines for HTML presentation', (done) => {
     const uuid = '9613CD00-7145-4ABC-8CA8-79CD9E39BB4F'
-    const logfile = path.join('test','fixtures','haraka.log');
+    const logfile = path.join('test', 'fixtures', 'haraka.log')
     this.reader.grepWithShell(logfile, uuid, (err, r) => {
       this.reader.asHtml(uuid, r, (html) => {
         assert.ok(/^<html>/.test(html))
@@ -126,6 +132,6 @@ describe('asHtml', () => {
 
 describe('get_rules', () => {
   it.skip('returns rules section from karma.ini', (done) => {
-    done();
+    done()
   })
 })

@@ -3,60 +3,54 @@
 
 # haraka-plugin-log-reader
 
-
 extracts matching log entries from the haraka log file
-
 
 # Install
 
-
-````
+```
 cd /my/haraka/config/dir
 npm install haraka-plugin-log-reader
-````
-
+```
 
 ## Enable
 
 Add `log-reader` to `haraka/config/plugins` file.
 
-
 # Usage
 
 When enabled, this plugin registers two URL routes in Haraka's http server:
 
-* karma/rules
-* /logs/:uuid
+- karma/rules
+- /logs/:uuid
 
 The former rule simply returns a list of the Haraka rules in use. The http client uses those rules (the ID, reason, and value) to display the `Policy Rules` and `Steps to Resolve` sections in the web page.
 
 # Example
 
-
 ### Sorry we blocked your message:
 
 Our filters mistook your server for a malicious computer attempting to send spam. To improve your mail servers reputation, please contact your IT helpdesk or Systems Administrator and ask them for help.
 
-----------
+---
 
 ### Policy Rules
 
-* -7,  DNS Blacklist (b.barracudacentral.org)
-* -5,  DNS Blacklist (zen.spamhaus.org)
-* -3,  DNS Blacklist (dnsbl-1.uceprotect.net)
-* -3,  DNS Blacklist (bl.spamcop.net)
-* -3,  ASN reputation is spam-only (asn_all_bad)
-* -1,  Geographic distance is unusual for ham (4000)
-* -1,  Geographic distance is unusual for ham (8000)
-* -1,  ASN reputation is bad (karma)
+- -7, DNS Blacklist (b.barracudacentral.org)
+- -5, DNS Blacklist (zen.spamhaus.org)
+- -3, DNS Blacklist (dnsbl-1.uceprotect.net)
+- -3, DNS Blacklist (bl.spamcop.net)
+- -3, ASN reputation is spam-only (asn_all_bad)
+- -1, Geographic distance is unusual for ham (4000)
+- -1, Geographic distance is unusual for ham (8000)
+- -1, ASN reputation is bad (karma)
 
-----------
+---
 
 ### Steps to Resolve
 
-* Disinfect your host/network
+- Disinfect your host/network
 
-----------
+---
 
 ## Raw Logs
 
@@ -75,12 +69,9 @@ Our filters mistook your server for a malicious computer attempting to send spam
 [NOTICE] [core] disconnect ip=95.160.74.108 rdns="095160074108.gdansk.vectranet.pl" helo="" relay=N early=N esmtp=N tls=N pipe=N errors=0 txns=0 rcpts=0/0/0 msgs=0/0/0 bytes=0 lr="" time=12.752
 </pre></html>
 
-
 [ci-img]: https://github.com/haraka/haraka-plugin-log-reader/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/haraka/haraka-plugin-log-reader/actions/workflows/ci.yml
 [cov-img]: https://codecov.io/github/haraka/haraka-plugin-log-reader/coverage.svg
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-log-reader
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-log-reader/badges/gpa.svg
 [clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-log-reader
-[npm-img]: https://nodei.co/npm/haraka-plugin-log-reader.png
-[npm-url]: https://www.npmjs.com/package/haraka-plugin-log-reader
