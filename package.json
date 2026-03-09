@@ -51,8 +51,5 @@
   "prettier": {
     "singleQuote": true,
     "semi": false
-  },
-  "dependencies": {
-    "mocha": "^11.7.5"
   }
 }
