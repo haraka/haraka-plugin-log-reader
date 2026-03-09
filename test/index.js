@@ -101,11 +101,12 @@ describe('grepWithShell', () => {
 })
 
 describe('asHtml', () => {
-  beforeEach(() => {
+  beforeEach((done) => {
     this.reader = new fixtures.plugin('index')
     this.reader.register()
     this.reader.config = this.reader.config.module_config(path.resolve('test'))
     this.reader.load_karma_ini()
+    done()
   })
 
   it('formats a block of log lines for HTML presentation', () => {
