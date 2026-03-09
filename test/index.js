@@ -2,13 +2,20 @@
 
 process.env.NODE_ENV = 'test'
 
-const assert = require('assert')
-const path = require('path')
+const assert = require('node:assert')
+const path = require('node:path')
 
 const fixtures = require('haraka-test-fixtures')
 
 beforeEach((done) => {
   this.reader = new fixtures.plugin('index')
+
+  // replace vm-compiled functions with instrumented versions for coverage tracking
+  if (process.env.HARAKA_COVERAGE) {
+    const plugin_module = require('../index.js')
+    Object.assign(this.reader, plugin_module)
+  }
+
   done()
 })
 

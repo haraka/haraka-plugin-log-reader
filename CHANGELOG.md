@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+### Added
+  
+- instrumentation to measure test coverage
+
 ### [1.0.15] - 2025-01-31
 
 - doc: mv Changes.md CHANGELOG.md
