@@ -36,7 +36,7 @@ exports.load_karma_ini = function () {
   if (!plugin.karma_cfg.result_awards) return
   if (!plugin.result_awards) plugin.result_awards = {}
 
-  Object.keys(plugin.karma_cfg.result_awards).forEach(function (anum) {
+  for (const anum of Object.keys(plugin.karma_cfg.result_awards)) {
     const parts = plugin.karma_cfg.result_awards[anum]
       .replace(/\s+/, ' ')
       .split(/(?:\s*\|\s*)/)
@@ -50,7 +50,7 @@ exports.load_karma_ini = function () {
       reason: parts[5],
       resolution: parts[6],
     }
-  })
+  }
 }
 
 exports.get_rules = function (req, res) {
@@ -103,8 +103,8 @@ exports.asHtml = function (uuid, matched, done) {
   let monthDay = ''
   const matchMonthDay = new RegExp('^([A-Z][a-z]{2}[ ]{1,2}[0-9]{1,2}) ')
 
-  matched.split('\n').forEach((line) => {
-    if (!line) return
+  for (const line of matched.split('\n')) {
+    if (!line) continue
 
     let transId
     let replaceString = ''
@@ -141,7 +141,7 @@ exports.asHtml = function (uuid, matched, done) {
     if (/\[karma/.test(line) && /awards/.test(line)) {
       lastKarmaLine = line
     }
-  })
+  }
 
   let awardNums = []
   if (lastKarmaLine) {
@@ -180,21 +180,21 @@ function getAwards(awardNums) {
   if (!awardNums || awardNums.length === 0) return []
 
   const awards = []
-  awardNums.forEach(function (a) {
-    if (!a || !plugin.result_awards[a]) return
+  for (const a of awardNums) {
+    if (!a || !plugin.result_awards[a]) continue
     plugin.result_awards[a].id = a
     awards.push(plugin.result_awards[a])
-  })
+  }
 
   const listItems = []
-  awards.sort(sortByAward).forEach(function (a) {
+  for (const a of awards.sort(sortByAward)) {
     const start = `<li> ${a.award},  `
     if (a.reason) {
       listItems.push(`${start + a.reason} (${a.value})</li>`)
-      return
+      continue
     }
     listItems.push(`${start + a.pi_name} ${a.property} ${a.value}</li>`)
-  })
+  }
   return listItems
 }
 
@@ -202,19 +202,19 @@ function getResolutions(awardNums) {
   if (!awardNums || awardNums.length === 0) return []
 
   const awards = []
-  awardNums.forEach(function (a) {
-    if (!a || !plugin.result_awards[a]) return
+  for (const a of awardNums) {
+    if (!a || !plugin.result_awards[a]) continue
     awards.push(plugin.result_awards[a])
-  })
+  }
 
   const listItems = []
   const resolutionSeen = {}
-  awards.sort(sortByAward).forEach(function (a) {
-    if (!a.resolution) return
-    if (resolutionSeen[a.resolution]) return
+  for (const a of awards.sort(sortByAward)) {
+    if (!a.resolution) continue
+    if (resolutionSeen[a.resolution]) continue
     resolutionSeen[a.resolution] = true
     listItems.push(`<li>${a.resolution}</li>`)
-  })
+  }
   return listItems
 }
 

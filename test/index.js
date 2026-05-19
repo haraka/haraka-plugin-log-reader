@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 const assert = require('node:assert')
 const path = require('node:path')
+const { describe, it, beforeEach } = require('node:test')
 
 const fixtures = require('haraka-test-fixtures')
 
