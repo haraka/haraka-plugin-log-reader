@@ -5,7 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Unreleased
 
 ### [1.1.0] - 2026-05-18
-- release 1.0.17 (#37)
+
+- fix(security): use `grep -F $UUID` (fixed string)
+- fix(security): app.use -> app.get
+- fix(security): karma rules closed by default
+- fix(security): add grep buffer limit and timeout
+- test: add test coverage for all the above
 - Added instrumentation to measure test coverage (#36)
 
 ### [1.0.17] - 2026-05-18

@@ -31,7 +31,7 @@ describe('register', () => {
   it('loads log.reader.ini', () => {
     this.reader.register()
     assert.deepEqual(this.reader.cfg, {
-      main: {},
+      main: { allow_rules_endpoint: false },
       log: {
         file: '/var/log/haraka.log',
       },
@@ -53,7 +53,7 @@ describe('log.reader.ini', () => {
   })
 })
 
-describe('grepWithShell', () => {
+describe('grepLog', () => {
   beforeEach(() => {
     this.reader = new fixtures.plugin('index')
     this.reader.register()
@@ -64,7 +64,7 @@ describe('grepWithShell', () => {
   it('reads matching connection entries from a log file', async () => {
     const logfile = path.join('test', 'fixtures', 'haraka.log')
     await new Promise((resolve) => {
-      this.reader.grepWithShell(
+      this.reader.grepLog(
         logfile,
         '3E6A027F-8307-4DA4-B105-2A39EC4B58D4',
         (err, r) => {
@@ -80,7 +80,7 @@ describe('grepWithShell', () => {
   it('reads matching transaction entries from a log file', async () => {
     const logfile = path.join('test', 'fixtures', 'haraka.log')
     await new Promise((resolve) => {
-      this.reader.grepWithShell(
+      this.reader.grepLog(
         logfile,
         '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1',
         (err, r) => {
@@ -97,7 +97,7 @@ describe('grepWithShell', () => {
     const uuid = '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.1'
     const logfile = path.join('test', 'fixtures', 'haraka.log')
     await new Promise((resolve) => {
-      this.reader.grepWithShell(logfile, uuid, (err, r) => {
+      this.reader.grepLog(logfile, uuid, (err, r) => {
         assert.ifError(err)
         this.reader.asHtml(uuid, r, (html) => {
           // console.log(html);
@@ -122,7 +122,7 @@ describe('asHtml', () => {
     const uuid = '9613CD00-7145-4ABC-8CA8-79CD9E39BB4F'
     const logfile = path.join('test', 'fixtures', 'haraka.log')
     await new Promise((resolve) => {
-      this.reader.grepWithShell(logfile, uuid, (err, r) => {
+      this.reader.grepLog(logfile, uuid, (err, r) => {
         this.reader.asHtml(uuid, r, (html) => {
           assert.ok(/^<html>/.test(html))
           assert.ok(/<\/html>/.test(html))
@@ -134,9 +134,109 @@ describe('asHtml', () => {
   })
 })
 
-// the subsequent functions require the express res/req
-// those could be mocked up, along with some sample log files
+function mockRes() {
+  return {
+    statusCode: 200,
+    body: undefined,
+    status(code) {
+      this.statusCode = code
+      return this
+    },
+    send(body) {
+      this.body = body
+      return this
+    },
+  }
+}
+
+describe('get_logs input validation', () => {
+  beforeEach(() => {
+    this.reader = new fixtures.plugin('index')
+    this.reader.register()
+    // never let validation tests touch the real grep/log
+    this.grepCalls = []
+    this.reader.grepLog = (file, uuid, done) => {
+      this.grepCalls.push(uuid)
+      done(null, '')
+    }
+    this.reader.asHtml = (uuid, matched, done) => done('<html></html>')
+  })
+
+  it('accepts a canonical Haraka UUID', () => {
+    const res = mockRes()
+    this.reader.get_logs(
+      { params: { uuid: '3E6A027F-8307-4DA4-B105-2A39EC4B58D4' } },
+      res,
+    )
+    assert.equal(res.statusCode, 200)
+    assert.equal(this.grepCalls.length, 1)
+  })
+
+  it('accepts a canonical UUID with transaction suffix', () => {
+    const res = mockRes()
+    this.reader.get_logs(
+      { params: { uuid: '3E6A027F-8307-4DA4-B105-2A39EC4B58D4.12' } },
+      res,
+    )
+    assert.equal(res.statusCode, 200)
+    assert.equal(this.grepCalls.length, 1)
+  })
+
+  it('rejects a crafted regex-wildcard uuid (no grep invocation)', () => {
+    const res = mockRes()
+    // passes the old loose /^[0-9A-F\-.]{12,40}$/i but is a grep pattern
+    // that would wildcard-match unrelated connections' log lines
+    this.reader.get_logs(
+      { params: { uuid: '........-....-....-....-............' } },
+      res,
+    )
+    assert.equal(res.statusCode, 400)
+    assert.equal(this.grepCalls.length, 0)
+  })
+
+  it('rejects a leading-dash (grep arg-injection) uuid', () => {
+    const res = mockRes()
+    this.reader.get_logs({ params: { uuid: '--------------------' } }, res)
+    assert.equal(res.statusCode, 400)
+    assert.equal(this.grepCalls.length, 0)
+  })
+
+  it('rejects a uuid with no dashes', () => {
+    const res = mockRes()
+    this.reader.get_logs({ params: { uuid: 'deadbeefdeadbeef' } }, res)
+    assert.equal(res.statusCode, 400)
+    assert.equal(this.grepCalls.length, 0)
+  })
+})
 
 describe('get_rules', () => {
-  it.skip('returns rules section from karma.ini', () => {})
+  beforeEach(() => {
+    this.reader = new fixtures.plugin('index')
+    this.reader.register()
+    this.reader.result_awards = { 1: { award: -7, reason: 'test' } }
+  })
+
+  it('is forbidden by default (secure by default)', () => {
+    const res = mockRes()
+    this.reader.get_rules({}, res)
+    assert.equal(res.statusCode, 403)
+    assert.ok(/Forbidden/.test(res.body))
+  })
+
+  it('stays forbidden when explicitly disabled', () => {
+    this.reader.cfg.main.allow_rules_endpoint = false
+    const res = mockRes()
+    this.reader.get_rules({}, res)
+    assert.equal(res.statusCode, 403)
+  })
+
+  it('serves rules JSON only when explicitly enabled', () => {
+    this.reader.cfg.main.allow_rules_endpoint = true
+    const res = mockRes()
+    this.reader.get_rules({}, res)
+    assert.equal(res.statusCode, 200)
+    assert.deepEqual(JSON.parse(res.body), {
+      1: { award: -7, reason: 'test' },
+    })
+  })
 })

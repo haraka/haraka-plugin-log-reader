@@ -24,15 +24,21 @@ exports.register = function () {
 }
 
 exports.hook_init_http = function (next, server) {
-  server.http.app.use('/logs/:uuid', exports.get_logs)
-  server.http.app.use('/karma/rules', exports.get_rules)
+  server.http.app.get('/logs/:uuid', exports.get_logs)
+  server.http.app.get('/karma/rules', exports.get_rules)
   next()
 }
 
 exports.get_logreader_ini = function () {
-  plugin.cfg = plugin.config.get('log.reader.ini', function () {
-    plugin.get_logreader_ini()
-  })
+  plugin.cfg = plugin.config.get(
+    'log.reader.ini',
+    {
+      booleans: ['-main.allow_rules_endpoint'],
+    },
+    function () {
+      plugin.get_logreader_ini()
+    },
+  )
 
   if (plugin.cfg.log && plugin.cfg.log.file) {
     log = plugin.cfg.log.file
@@ -65,24 +71,28 @@ exports.load_karma_ini = function () {
 }
 
 exports.get_rules = function (req, res) {
-  if (plugin.cfg.main.allow_rules_endpoint === false) {
-    return res.status(403).send('<html><body>Forbidden</body></html>')
+  if (plugin.cfg.main.allow_rules_endpoint === true) {
+    return res.send(JSON.stringify(plugin.result_awards))
   }
-  res.send(JSON.stringify(plugin.result_awards))
+  return res.status(403).send('<html><body>Forbidden</body></html>')
 }
 
 exports.get_logs = function (req, res) {
   const uuid = req.params.uuid
-  if (!/-/.test(uuid)) {
-    return res.status(400).send('<html><body>Invalid Request</body></html>')
-  }
-  if (!/^[0-9A-F\-.]{12,40}$/i.test(uuid)) {
+  // Canonical Haraka connection UUID (RFC-4122 shape: 8-4-4-4-12 hex),
+  // with an optional .N transaction suffix. Strict validation keeps
+  // untrusted input out of the grep pattern entirely -- no regex
+  // metacharacters and no leading '-' that grep would parse as an option.
+  if (
+    !/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}(?:\.\d{1,2})?$/i.test(
+      uuid,
+    )
+  ) {
     return res.status(400).send('<html><body>Invalid Request</body></html>')
   }
 
   // spawning a grep process is quite a lot faster than fs.read
-  // (yes, I benchmarked it)
-  exports.grepWithShell(log, uuid, function (err, matched) {
+  exports.grepLog(log, uuid, function (err, matched) {
     if (err) {
       plugin.logerror(err)
       return res
@@ -96,8 +106,10 @@ exports.get_logs = function (req, res) {
   })
 }
 
-exports.grepWithShell = function (file, uuid, done) {
-  let matched = ''
+const GREP_MAX_BYTES = 5 * 1024 * 1024 // cap response buffering
+const GREP_TIMEOUT_MS = 20 * 1000
+
+exports.grepLog = function (file, uuid, done) {
   let searchString = uuid
 
   if (/\.[0-9]{1,2}$/.test(uuid)) {
@@ -105,17 +117,50 @@ exports.grepWithShell = function (file, uuid, done) {
     searchString = uuid.replace(/\.[0-9]{1,2}$/, '')
   }
 
-  // var child = spawn('grep', [ '-e', regex, file ]);
-  const child = spawn('grep', ['--text', searchString, file])
-  child.stdout.on('data', function (buffer) {
+  let matched = ''
+  let stderr = ''
+  let finished = false
+  let timer
+
+  function finish(err, data) {
+    if (finished) return
+    finished = true
+    clearTimeout(timer)
+    done(err, data)
+  }
+
+  // -F: treat searchString as a literal, not a regex (defense in depth;
+  //     validation already forbids metachars).
+  // -e / --: searchString can never be parsed as a grep option, and the
+  //     filename is separated from options.
+  const child = spawn('grep', ['--text', '-F', '-e', searchString, '--', file])
+
+  timer = setTimeout(() => {
+    child.kill('SIGKILL')
+    finish(new Error(`grep timed out after ${GREP_TIMEOUT_MS}ms`))
+  }, GREP_TIMEOUT_MS)
+
+  child.stdout.on('data', (buffer) => {
     matched += buffer.toString()
+    if (matched.length > GREP_MAX_BYTES) {
+      child.kill('SIGKILL')
+      finish(new Error(`log match exceeded ${GREP_MAX_BYTES} bytes`))
+    }
   })
 
-  child.stdout.on('end', function () {
-    done(null, matched)
+  child.stderr.on('data', (buffer) => {
+    stderr += buffer.toString()
   })
 
-  child.on('error', done)
+  child.on('error', finish)
+
+  child.on('close', (code) => {
+    // grep exit status: 0 = match, 1 = no match (both fine), >1 = error
+    if (code > 1) {
+      return finish(new Error(`grep exited ${code}: ${stderr.trim()}`))
+    }
+    finish(null, matched)
+  })
 }
 
 exports.asHtml = function (uuid, matched, done) {
@@ -131,12 +176,8 @@ exports.asHtml = function (uuid, matched, done) {
     let replaceString = ''
 
     if (!monthDay) {
-      try {
-        ;[, monthDay] = matchMonthDay.exec(line)
-      } catch (err) {
-        plugin.loginfo(line)
-        plugin.logerror(err)
-      }
+      const m = matchMonthDay.exec(line)
+      if (m) monthDay = m[1]
     }
 
     const uuidMatch = line.match(/ \[([A-F0-9\-.]{12,40})\] /)
@@ -182,20 +223,6 @@ exports.asHtml = function (uuid, matched, done) {
     }</pre></div></body></html>`,
   )
 }
-
-// exports.grepWithFs = function (file, regex, done) {
-//     const wantsRe = new RegExp(regex);
-//     const fsOpts = { flag: 'r', encoding: 'utf8' };
-//     require('fs').readFile(log, fsOpts, function (err, data) {
-//         if (err) throw (err);
-//         let res = '';
-//         data.toString().split(/\n/).forEach(function (line) {
-//             if (wantsRe && !wantsRe.test(line)) return;
-//             res += line + '\n';
-//         });
-//         done(null, res);
-//     });
-// };
 
 function getAwards(awardNums) {
   if (!awardNums || awardNums.length === 0) return []
