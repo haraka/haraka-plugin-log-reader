@@ -16,7 +16,6 @@ beforeEach(() => {
     const plugin_module = require('../index.js')
     Object.assign(this.reader, plugin_module)
   }
-
 })
 
 describe('register', () => {
@@ -139,6 +138,5 @@ describe('asHtml', () => {
 // those could be mocked up, along with some sample log files
 
 describe('get_rules', () => {
-  it.skip('returns rules section from karma.ini', () => {
-  })
+  it.skip('returns rules section from karma.ini', () => {})
 })

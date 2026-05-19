@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+### [1.1.0] - 2026-05-18
+- release 1.0.17 (#37)
+- Added instrumentation to measure test coverage (#36)
+
 ### [1.0.17] - 2026-05-18
 
 - change: replace forEach with for...of
@@ -96,3 +100,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 [1.0.14]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.0.14
 [1.0.15]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.0.15
 [1.0.17]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.0.17
+[1.1.0]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.1.0
