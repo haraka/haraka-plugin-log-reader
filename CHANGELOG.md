@@ -4,6 +4,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+### [1.1.0] - 2026-05-18
+
+- feat: render the page in a table, fixes #6
+  - hilite the terminal dispisition rows
+- feat: show correct delivery disposition, fixes #7
+- fix(security): use `grep -F $UUID` (fixed string)
+- fix(security): app.use -> app.get
+- fix(security): karma rules closed by default
+- fix(security): add grep buffer limit and timeout
+- test: add test coverage for all the above
+- Added instrumentation to measure test coverage (#36)
+
 ### [1.0.17] - 2026-05-18
 
 - change: replace forEach with for...of
@@ -96,3 +108,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 [1.0.14]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.0.14
 [1.0.15]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.0.15
 [1.0.17]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.0.17
+[1.1.0]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.1.0

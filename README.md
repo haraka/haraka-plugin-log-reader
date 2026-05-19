@@ -18,12 +18,19 @@ Add `log-reader` to `haraka/config/plugins` file.
 
 # Usage
 
-When enabled, this plugin registers two URL routes in Haraka's http server:
+When enabled, this plugin registers these URL routes in Haraka's http server:
 
-- karma/rules
-- /logs/:uuid
+- `/logs/:uuid`
+- `/karma/rules` (disabled by default)
 
-The former rule simply returns a list of the Haraka rules in use. The http client uses those rules (the ID, reason, and value) to display the `Policy Rules` and `Steps to Resolve` sections in the web page.
+`/logs/:uuid` returns the log lines for a connection, rendered as HTML
+(including the `Policy Rules` and `Steps to Resolve` sections, built
+server-side from `karma.ini`).
+
+`/karma/rules` returns the raw list of Haraka rules in use as JSON, for an
+external http client. Because it discloses your spam-filter configuration
+to anyone who can reach the HTTP server, it is **disabled by default**.
+Set `allow_rules_endpoint=true` in `log.reader.ini` to enable it.
 
 # Example
 
