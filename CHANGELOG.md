@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### [1.1.0] - 2026-05-18
 
+- feat: render the page in a table, fixes #6
+  - hilite the terminal dispisition rows
+- feat: show correct delivery disposition, fixes #7
 - fix(security): use `grep -F $UUID` (fixed string)
 - fix(security): app.use -> app.get
 - fix(security): karma rules closed by default
