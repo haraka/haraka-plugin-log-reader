@@ -6,12 +6,12 @@ const assert = require('node:assert/strict')
 const path = require('node:path')
 const { describe, it, beforeEach, afterEach } = require('node:test')
 
-const fixtures = require('haraka-test-fixtures')
+const { makePlugin } = require('haraka-test-fixtures')
 
 const mod = require('../index.js')
 
 beforeEach(() => {
-  this.reader = new fixtures.plugin('index')
+  this.reader = makePlugin('index', { register: false })
 
   // replace vm-compiled functions with instrumented versions for coverage tracking
   if (process.env.HARAKA_COVERAGE) {
@@ -255,7 +255,7 @@ describe('detectTransactions', () => {
 
 describe('asHtml connect-only probe', () => {
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
   })
 
@@ -276,7 +276,7 @@ describe('asHtml connect-only probe', () => {
 
 describe('asHtml rejected connection', () => {
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
   })
 
@@ -337,7 +337,7 @@ describe('asHtml rejected connection', () => {
 
 describe('asHtml multi-transaction', () => {
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
   })
 
@@ -395,7 +395,7 @@ describe('detectDisposition', () => {
 
 describe('grepLog', () => {
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
     this.reader.config = this.reader.config.module_config(path.resolve('test'))
     this.reader.load_karma_ini()
@@ -452,7 +452,7 @@ describe('grepLog', () => {
 
 describe('asHtml', () => {
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
     this.reader.config = this.reader.config.module_config(path.resolve('test'))
     this.reader.load_karma_ini()
@@ -505,7 +505,7 @@ describe('asHtml', () => {
 
 describe('asHtml UUID stripping', () => {
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
   })
 
@@ -534,7 +534,7 @@ describe('asHtml UUID stripping', () => {
 
 describe('asHtml row highlighting', () => {
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
   })
 
@@ -618,7 +618,7 @@ describe('get_logs input validation', () => {
   let origAsHtml
 
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
     // never let validation tests touch the real grep/log
     this.grepCalls = []
@@ -685,7 +685,7 @@ describe('get_logs input validation', () => {
 
 describe('get_rules', () => {
   beforeEach(() => {
-    this.reader = new fixtures.plugin('index')
+    this.reader = makePlugin('index', { register: false })
     this.reader.register()
     this.reader.result_awards = { 1: { award: -7, reason: 'test' } }
   })

@@ -1,7 +1,6 @@
-[![Build Status][ci-img]][ci-url]
-[![Code Climate][clim-img]][clim-url]
-
 # haraka-plugin-log-reader
+
+[![Test][ci-img]][ci-url] [![Cover][cov-img]][cov-url] [![Qlty][qlty-img]][qlty-url]
 
 extracts matching log entries from the haraka log file
 
@@ -76,9 +75,11 @@ Our filters mistook your server for a malicious computer attempting to send spam
 [NOTICE] [core] disconnect ip=95.160.74.108 rdns="095160074108.gdansk.vectranet.pl" helo="" relay=N early=N esmtp=N tls=N pipe=N errors=0 txns=0 rcpts=0/0/0 msgs=0/0/0 bytes=0 lr="" time=12.752
 </pre></html>
 
+<!-- leave these buried at the bottom of the document -->
+
 [ci-img]: https://github.com/haraka/haraka-plugin-log-reader/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/haraka/haraka-plugin-log-reader/actions/workflows/ci.yml
 [cov-img]: https://codecov.io/github/haraka/haraka-plugin-log-reader/coverage.svg
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-log-reader
-[clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-log-reader/badges/gpa.svg
-[clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-log-reader
+[qlty-img]: https://qlty.sh/gh/haraka/projects/haraka-plugin-log-reader/maintainability.svg
+[qlty-url]: https://qlty.sh/gh/haraka/projects/haraka-plugin-log-reader
