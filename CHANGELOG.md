@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+### [1.1.1] - 2026-06-07
+
+#### Changed
+
+- refactored against test-fixtures 1.7.0 (#39)
+
 - test: refactored against test-fixtures 1.7.0
 
 ### [1.1.0] - 2026-05-18
@@ -111,3 +117,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 [1.0.15]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.0.15
 [1.0.17]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.0.17
 [1.1.0]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.1.0
+[1.1.1]: https://github.com/haraka/haraka-plugin-log-reader/releases/tag/v1.1.1

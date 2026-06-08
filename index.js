@@ -454,6 +454,7 @@ exports.asHtml = function (uuid, matched, done) {
 
 function getAwards(awardNums) {
   if (!awardNums || awardNums.length === 0) return []
+  if (!plugin.result_awards) return []
 
   const awards = []
   for (const a of awardNums) {
@@ -480,6 +481,7 @@ function getAwards(awardNums) {
 
 function getResolutions(awardNums) {
   if (!awardNums || awardNums.length === 0) return []
+  if (!plugin.result_awards) return []
 
   const awards = []
   for (const a of awardNums) {
