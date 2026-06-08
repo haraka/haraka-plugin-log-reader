@@ -6,11 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### [1.1.1] - 2026-06-07
 
-#### Changed
-
-- refactored against test-fixtures 1.7.0 (#39)
-
-- test: refactored against test-fixtures 1.7.0
+- fix: guard against undefined karma[result_awards]
+- test: refactored against test-fixtures 1.7.0, #39
+- qlty boost
 
 ### [1.1.0] - 2026-05-18
 

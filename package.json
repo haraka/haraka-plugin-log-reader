@@ -48,7 +48,7 @@
   "homepage": "https://github.com/haraka/haraka-plugin-log-reader#readme",
   "devDependencies": {
     "@haraka/eslint-config": "^3.0.0",
-    "haraka-test-fixtures": "^1.7.0"
+    "haraka-test-fixtures": "^1.7.1"
   },
   "prettier": {
     "singleQuote": true,
