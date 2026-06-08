@@ -202,7 +202,7 @@ describe('detectTransactions', () => {
     `hook=connect plugin=dns-list function=onConnect params="" retval=DENY msg="listed"`
   const overrideLine =
     `Nov  4 13:35:35 haraka haraka[1]: [INFO] [${base}] [core] ` +
-    `deny(soft?) overriden by deny hook`
+    `deny(soft?) overridden by deny hook`
   const queueOK = `Nov  4 13:35:35 haraka haraka[1]: [NOTICE] [${base}.1] [core] queue code=OK msg="x"`
 
   it('ignores a DENY that was overridden by a deny hook', () => {
@@ -304,8 +304,8 @@ describe('asHtml rejected connection', () => {
     }
     const matched = [
       `Nov  4 13:35:35 haraka haraka[1]: [INFO] [${base}] [core] hook=connect plugin=dns-list function=onConnect params="" retval=DENY msg="listed on dnsbl.justspam.org"`,
-      `Nov  4 13:35:35 haraka haraka[1]: [INFO] [${base}] [core] deny(soft?) overriden by deny hook`,
-      `Nov  4 13:35:58 haraka haraka[1]: [NOTICE] [${base}.1] [core] disconnect ip=51.89.142.222 txns=1 rcpts=0/0/1 msgs=0/0/0 bytes=0 lr="550 I cannot deliver mail for <tommynash@thomasnash.com>" time=23`,
+      `Nov  4 13:35:35 haraka haraka[1]: [INFO] [${base}] [core] deny(soft?) overridden by deny hook`,
+      `Nov  4 13:35:58 haraka haraka[1]: [NOTICE] [${base}.1] [core] disconnect ip=51.89.142.222 txns=1 rcpts=0/0/1 msgs=0/0/0 bytes=0 lr="550 I cannot deliver mail for <tommynash@redacted.com>" time=23`,
     ].join('\n')
     const html = await new Promise((r) => this.reader.asHtml(base, matched, r))
     const denyRow = rowClassFor(html, 'dnsbl.justspam.org')
@@ -496,6 +496,31 @@ describe('asHtml', () => {
           assert.ok(/<table/.test(html))
           assert.ok(/<thead>/.test(html))
           assert.ok(/<tbody>/.test(html))
+          resolve()
+        })
+      })
+    })
+  })
+})
+
+describe('asHtml with karma awards but no result_awards config', () => {
+  // Regression: if karma.ini has no [result_awards] section, plugin.result_awards
+  // is undefined and getAwards/getResolutions threw "Cannot read properties of
+  // undefined (reading '<award_num>')".
+  beforeEach(() => {
+    this.reader = makePlugin('index', { register: false })
+    this.reader.register()
+    // deliberately leave result_awards undefined (no karma.ini loaded)
+  })
+
+  it('does not crash when karma awards appear in the log', async () => {
+    const uuid = '9613CD00-7145-4ABC-8CA8-79CD9E39BB4F'
+    const logfile = path.join('test', 'fixtures', 'haraka.log')
+    await new Promise((resolve) => {
+      this.reader.grepLog(logfile, uuid, (err, r) => {
+        assert.ok(!err)
+        this.reader.asHtml(uuid, r, (html) => {
+          assert.ok(/^<html>/.test(html))
           resolve()
         })
       })

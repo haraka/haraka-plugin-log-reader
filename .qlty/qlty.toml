@@ -8,5 +8,8 @@ exclude_patterns = [
 [smells.file_complexity]
 threshold = 300
 
+[smells.function_complexity]
+threshold = 26
+
 [smells.return_statements]
 enabled = false

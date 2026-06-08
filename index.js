@@ -71,6 +71,54 @@ function txnOf(line) {
   return t ? t[1] : ''
 }
 
+function parseLrDisposition(c) {
+  if (c === '5') return 'blocked'
+  if (c === '4') return 'delayed'
+  return 'delivered'
+}
+
+function processQueueLine(line, byTxn) {
+  const q = line.match(/\[core\] queue code=(\S+)/)
+  if (!q) return false
+  byTxn.set(txnOf(line), { disposition: dispositionForCode(q[1]), final: true })
+  return true
+}
+
+// No per-transaction signal. A connection that never opened a
+// transaction (txns=0) sent no message at all -- only a 5xx last
+// response (rejected before DATA) is a real "blocked" outcome; a
+// 2xx/4xx/empty response to non-mail commands is not.
+function resolveOutcome(byTxn, discTxns, connFallback) {
+  const out = [...byTxn.entries()]
+    .map(([txn, v]) => ({ txn, disposition: v.disposition }))
+    .sort((a, b) => Number(a.txn) - Number(b.txn))
+
+  if (out.length) return out
+  if (discTxns === 0) {
+    return [
+      { txn: '', disposition: connFallback === 'blocked' ? 'blocked' : 'none' },
+    ]
+  }
+  if (connFallback) return [{ txn: '', disposition: connFallback }]
+  return []
+}
+
+function processRetvalLine(line, byTxn) {
+  const rv = line.match(
+    /\bretval=(DENYSOFTDISCONNECT|DENYSOFT|DENYDISCONNECT|DENY)\b/,
+  )
+  if (!rv) return false
+  const txn = txnOf(line)
+  const cur = byTxn.get(txn)
+  if (!cur || !cur.final) {
+    byTxn.set(txn, {
+      disposition: /SOFT/.test(rv[1]) ? 'delayed' : 'blocked',
+      final: false,
+    })
+  }
+  return true
+}
+
 // Per-transaction dispositions for a connection. get_logs greps with the
 // .N suffix stripped, so a connection that sent several messages has all
 // of their lines here. Outcome signals, strongest first:
@@ -83,32 +131,11 @@ function txnOf(line) {
 function detectTransactions(lines) {
   const byTxn = new Map() // txn -> { disposition, final }
   let connFallback // 'blocked' | 'delayed' | 'delivered' from disconnect lr=
-  let discTxns // transaction count from the disconnect summary line
+  let discTxns
 
   for (const line of lines) {
-    const q = line.match(/\[core\] queue code=(\S+)/)
-    if (q) {
-      byTxn.set(txnOf(line), {
-        disposition: dispositionForCode(q[1]),
-        final: true,
-      })
-      continue
-    }
-
-    const rv = line.match(
-      /\bretval=(DENYSOFTDISCONNECT|DENYSOFT|DENYDISCONNECT|DENY)\b/,
-    )
-    if (rv) {
-      const txn = txnOf(line)
-      const cur = byTxn.get(txn)
-      if (!cur || !cur.final) {
-        byTxn.set(txn, {
-          disposition: /SOFT/.test(rv[1]) ? 'delayed' : 'blocked',
-          final: false,
-        })
-      }
-      continue
-    }
+    if (processQueueLine(line, byTxn)) continue
+    if (processRetvalLine(line, byTxn)) continue
 
     // A `deny hook` (e.g. karma) can veto an earlier DENY and let the
     // connection continue. Haraka logs this; drop the tentative (non-
@@ -125,30 +152,11 @@ function detectTransactions(lines) {
       const tx = line.match(/\btxns=(\d+)/)
       if (tx) discTxns = Number(tx[1])
       const lr = line.match(/\blr="([2-5])\d\d/)
-      if (lr) {
-        connFallback =
-          lr[1] === '5' ? 'blocked' : lr[1] === '4' ? 'delayed' : 'delivered'
-      }
+      if (lr) connFallback = parseLrDisposition(lr[1])
     }
   }
 
-  const out = [...byTxn.entries()]
-    .map(([txn, v]) => ({ txn, disposition: v.disposition }))
-    .sort((a, b) => Number(a.txn) - Number(b.txn))
-
-  if (out.length) return out
-
-  // No per-transaction signal. A connection that never opened a
-  // transaction (txns=0) sent no message at all -- only a 5xx last
-  // response (rejected before DATA) is a real "blocked" outcome; a
-  // 2xx/4xx/empty response to non-mail commands is not.
-  if (discTxns === 0) {
-    return [
-      { txn: '', disposition: connFallback === 'blocked' ? 'blocked' : 'none' },
-    ]
-  }
-  if (connFallback) return [{ txn: '', disposition: connFallback }]
-  return []
+  return resolveOutcome(byTxn, discTxns, connFallback)
 }
 exports.detectTransactions = detectTransactions
 
@@ -348,6 +356,56 @@ exports.grepLog = function (file, uuid, done) {
   })
 }
 
+function scrubLine(line, monthDay, matchMonthDay) {
+  if (!monthDay) {
+    const m = matchMonthDay.exec(line)
+    if (m) monthDay = m[1]
+  }
+
+  const uuidMatch = line.match(/ \[([A-F0-9\-.]{12,40})\] /)
+  let replaceString = ''
+  if (uuidMatch?.[1]) {
+    const transId = uuidMatch[1].match(/\.([0-9]{1,2})$/)
+    if (transId?.[1]) replaceString = `[${transId[1]}] `
+  }
+
+  let trimmed = line
+    .replace(/\[[A-F0-9\-.]{12,40}\] /, replaceString)
+    .replace(matchMonthDay, '')
+
+  if (/ haraka\[[0-9]+\]: /.test(trimmed)) {
+    trimmed = trimmed.replace(/(?: [a-z.-]+)? haraka\[[0-9]+\]: /, ' ')
+  } else if (/ haraka: \[/.test(trimmed)) {
+    trimmed = trimmed.replace(/(?: [a-z.-]+)? haraka: /, ' ')
+  }
+
+  return { trimmed, monthDay }
+}
+
+// Highlight the row that actually decided the outcome. A per-message
+// `queue code=` line colours itself; otherwise only the single
+// decisive line (a surviving DENY, or the terminal 4xx/5xx
+// disconnect) is highlighted -- never a DENY that a deny hook vetoed.
+function rowCls(p, trimmed, idx, decisive) {
+  let cls = p.level ? `log-${p.level}` : ''
+
+  const karmaScore = trimmed.match(/\[karma\].*\bscore:\s*(-?[0-9]+)/)
+  if (karmaScore) {
+    const score = parseInt(karmaScore[1], 10)
+    if (score > 0) cls = 'karma-positive'
+    else if (score < 0) cls = 'karma-negative'
+  }
+
+  const queueMatch = trimmed.match(/\[core\]\s+queue code=(\S+)/)
+  if (queueMatch) {
+    cls = `disposition-${dispositionForCode(queueMatch[1])}`
+  } else if (decisive && idx === decisive.idx) {
+    cls = `disposition-${decisive.disposition}`
+  }
+
+  return cls
+}
+
 exports.asHtml = function (uuid, matched, done) {
   // Strip ANSI up front so every consumer -- disposition detection, the
   // UUID/hostname/date scrubbing below, and parseLogLine -- sees clean
@@ -364,56 +422,14 @@ exports.asHtml = function (uuid, matched, done) {
   let idx = -1
   for (const line of rawLines) {
     idx++
-    let transId
-    let replaceString = ''
-
-    if (!monthDay) {
-      const m = matchMonthDay.exec(line)
-      if (m) monthDay = m[1]
-    }
-
-    const uuidMatch = line.match(/ \[([A-F0-9\-.]{12,40})\] /)
-    if (uuidMatch && uuidMatch[1]) {
-      transId = uuidMatch[1].match(/\.([0-9]{1,2})$/)
-    }
-    if (transId && transId[1]) replaceString = `[${transId[1]}] `
-
-    let trimmed = line
-      .replace(/\[[A-F0-9\-.]{12,40}\] /, replaceString) // UUID
-      .replace(matchMonthDay, '') // Mon DD
-
-    // strip prepended hostname
-    if (/ haraka\[[0-9]+\]: /.test(trimmed)) {
-      // with PID
-      trimmed = trimmed.replace(/(?: [a-z.-]+)? haraka\[[0-9]+\]: /, ' ')
-    } else if (/ haraka: \[/.test(trimmed)) {
-      // w/o PID
-      trimmed = trimmed.replace(/(?: [a-z.-]+)? haraka: /, ' ')
-    }
+    const scrubbed = scrubLine(line, monthDay, matchMonthDay)
+    monthDay = scrubbed.monthDay
+    const { trimmed } = scrubbed
 
     const p = parseLogLine(trimmed)
-    let rowClass = p.level ? `log-${p.level}` : ''
+    const cls = rowCls(p, trimmed, idx, decisive)
 
-    // Karma score lines: highlight positive/negative karma
-    const karmaScore = trimmed.match(/\[karma\].*\bscore:\s*(-?[0-9]+)/)
-    if (karmaScore) {
-      const score = parseInt(karmaScore[1], 10)
-      if (score > 0) rowClass = 'karma-positive'
-      else if (score < 0) rowClass = 'karma-negative'
-    }
-
-    // Highlight the row that actually decided the outcome. A per-message
-    // `queue code=` line colours itself; otherwise only the single
-    // decisive line (a surviving DENY, or the terminal 4xx/5xx
-    // disconnect) is highlighted -- never a DENY that a deny hook vetoed.
-    const queueMatch = trimmed.match(/\[core\]\s+queue code=(\S+)/)
-    if (queueMatch) {
-      rowClass = `disposition-${dispositionForCode(queueMatch[1])}`
-    } else if (decisive && idx === decisive.idx) {
-      rowClass = `disposition-${decisive.disposition}`
-    }
-
-    tableRows += `<tr class="${rowClass}">
+    tableRows += `<tr class="${cls}">
       <td>${escapeHtml(p.txn)}</td>
       <td>${escapeHtml(p.level.toUpperCase())}</td>
       <td>${formatPluginLink(p.plugin)}</td>
@@ -454,6 +470,7 @@ exports.asHtml = function (uuid, matched, done) {
 
 function getAwards(awardNums) {
   if (!awardNums || awardNums.length === 0) return []
+  if (!plugin.result_awards) return []
 
   const awards = []
   for (const a of awardNums) {
@@ -480,6 +497,7 @@ function getAwards(awardNums) {
 
 function getResolutions(awardNums) {
   if (!awardNums || awardNums.length === 0) return []
+  if (!plugin.result_awards) return []
 
   const awards = []
   for (const a of awardNums) {
